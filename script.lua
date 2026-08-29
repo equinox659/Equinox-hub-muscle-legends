@@ -7,32 +7,32 @@ local selectedUniqueItem = "Apex Overlord"
 local autoRep, fastRep, autoReb, autoRockGlitch, autoBuyPet = false, false, false, false, false
 local espEnabled = false
 
--- Diccionario maestro para traducción directa por UI de Roblox
+-- Diccionario maestro para traducción masiva por UI de Roblox
 local lang = {
     ES = {
         title = "Muscle legends | Equinox hub", notify = "¡Idioma cambiado a Español!",
-        f_strength = "Farming de Fuerza", f_durability = "Exploit de Durabilidad (Manual)", f_rebirth = "Renacimientos",
-        btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep (AFX x15)", btn_rock = "Auto Fast Rock Hit (Glitch)",
+        f_strength = "Farming de Fuerza", f_durability = "script de Durabilidad", f_rebirth = "Renacimientos",
+        btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep", btn_rock = "Auto Fast Rock Hit (Glitch)",
         btn_reb = "Auto Rebirth Inteligente", drop_rock = "Seleccionar Roca", drop_pet = "Seleccionar Mascota o Aura",
         btn_buy = "Auto Comprar Mascota/Aura", sec_est = "Estabilidad", sec_tienda = "Mascotas y Auras (Glitch Países Bajos)",
         sec_vis = "Visuales", btn_lag = "Activar Anti-Lag 100%", btn_crash = "Activar Anti-Crash", btn_esp = "Jugadores ESP (Wallhack)",
-        lang_select = "Seleccionar Idioma / Select Language"
+        lang_select = "Seleccionar Idioma / Select Language", t_farm = "Farming", t_pets = "Crystals (Pets)"
     },
     EN = {
         title = "Muscle legends | Equinox hub", notify = "Language changed to English!",
-        f_strength = "Strength Farming", f_durability = "Durability Exploit (Manual)", f_rebirth = "Rebirths",
-        btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep (AFX x15)", btn_rock = "Auto Fast Rock Hit (Glitch)",
+        f_strength = "Strength Farming", f_durability = "Durability Script", f_rebirth = "Rebirths",
+        btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep", btn_rock = "Auto Fast Rock Hit (Glitch)",
         btn_reb = "Smart Auto Rebirth", drop_rock = "Select Rock", drop_pet = "Select Pet or Aura",
         btn_buy = "Auto Buy Pet/Aura", sec_est = "Stability", sec_tienda = "Pets & Auras (Netherlands Glitch)",
         sec_vis = "Visuals", btn_lag = "Enable Anti-Lag 100%", btn_crash = "Enable Anti-Crash", btn_esp = "Player ESP (Wallhack)",
-        lang_select = "Select Language / Seleccionar Idioma"
+        lang_select = "Select Language / Seleccionar Idioma", t_farm = "Farming", t_pets = "Crystals (Pets)"
     }
 }
 
 local Window = OrionLib:MakeWindow({Name = lang[SelectedLanguage].title, HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
 
 local RocksConfig = {
-    ["Industrial Jungle Rock"] = 25000000, ["Ancient Rock"] = 10000000, ["Muscle King Rock"] = 5000000,
+    ["Industrial Rock"] = 25000000, ["Jungle rock"] = 10000000, ["Muscle King Rock"] = 5000000,
     ["Legend Rock"] = 1000000, ["Eternal Rock"] = 750000, ["Mythical Rock"] = 400000,
     ["Frost Rock"] = 150000, ["Beach Rock"] = 5000, ["Starter Rock"] = 100, ["Tiny Rock"] = 0
 }
@@ -56,8 +56,9 @@ local function autoEquipPunch()
     if punch and humanoid and punch.Parent ~= player.Character then humanoid:EquipTool(punch) end
 end
 
--- CREACIÓN DE PESTAÑAS (Fijas para evitar duplicados en tu PC)
-local Tab1 = Window:MakeTab({Name = "Farming", Icon = "", PremiumOnly = false})
+-- CREACIÓN DE LAS 2 PESTAÑAS (TABS) SOLICITADAS
+local Tab1 = Window:MakeTab({Name = lang[SelectedLanguage].t_farm, Icon = "", PremiumOnly = false})
+local Tab4 = Window:MakeTab({Name = lang[SelectedLanguage].t_pets, Icon = "", PremiumOnly = false})
 
 local secStr = Tab1:AddSection({Name = lang[SelectedLanguage].f_strength})
 local togNormal = Tab1:AddToggle({
@@ -119,14 +120,10 @@ local togRock = Tab1:AddToggle({
                             physicalRock.Size = Vector3.new(2, 1, 1)
                             physicalRock.Transparency, physicalRock.CanCollide = 1, false
                             physicalRock.CFrame = rightHand.CFrame
-                            local tp = physicalRock:FindFirstChild("TouchPart")
-                            if tp then tp.CFrame, tp.Transparency, tp.CanCollide = rightHand.CFrame, 1, false end
                         end)
                         if type(firetouchinterest) == "function" then
                             pcall(firetouchinterest, physicalRock, rightHand, 0)
                             pcall(firetouchinterest, physicalRock, rightHand, 1)
-                            pcall(firetouchinterest, physicalRock, leftHand, 0)
-                            pcall(firetouchinterest, physicalRock, leftHand, 1)
                         end
                         pcall(function() ev:FireServer("punch", "leftHand") ev:FireServer("punch", "rightHand") end)
                     end
@@ -157,8 +154,8 @@ local togReb = Tab1:AddToggle({
     end    
 })
 
-local secEst = Tab1:AddSection({Name = lang[SelectedLanguage].sec_est})
-local btnLag = Tab1:AddButton({Name = lang[SelectedLanguage].btn_lag, Callback = function()
+local secEst = Tab4:AddSection({Name = lang[SelectedLanguage].sec_est})
+local btnLag = Tab4:AddButton({Name = lang[SelectedLanguage].btn_lag, Callback = function()
     pcall(function()
         for _, obj in pairs(workspace:GetDescendants()) do
             if obj:IsA("BasePart") or obj:IsA("MeshPart") then obj.Material, obj.Reflectance = Enum.Material.SmoothPlastic, 0
@@ -169,16 +166,16 @@ local btnLag = Tab1:AddButton({Name = lang[SelectedLanguage].btn_lag, Callback =
     end)
 end})
 
-local btnCrash = Tab1:AddButton({Name = lang[SelectedLanguage].btn_crash, Callback = function() pcall(function() settings().Rendering.QualityLevel = Enum.QualityLevel.Level01 game:GetService("Debris"):SetMaxItems(5) end) end})
+local btnCrash = Tab4:AddButton({Name = lang[SelectedLanguage].btn_crash, Callback = function() pcall(function() settings().Rendering.QualityLevel = Enum.QualityLevel.Level01 game:GetService("Debris"):SetMaxItems(5) end) end})
 
-local secTienda = Tab1:AddSection({Name = lang[SelectedLanguage].sec_tienda})
-local dropPet = Tab1:AddDropdown({
+local secTienda = Tab4:AddSection({Name = lang[SelectedLanguage].sec_tienda})
+local dropPet = Tab4:AddDropdown({
     Name = lang[SelectedLanguage].drop_pet, Default = "Apex Overlord",
     Options = {"Apex Overlord", "Core Pup", "Volt Talon", "Reactor Beast", "Plasma Ravager", "Titan Reactor", "Neon Guardian", "Cybernetic Showdown Dragon", "Darkstar Hunter", "Muscle Sensei", "Infernal Dragon", "Aether Spirit Bunny", "Magic Butterfly", "Ultra Birdie", "Muscle King", "Entropic Blast"},
     Callback = function(opt) selectedUniqueItem = opt end
 })
 
-local togBuy = Tab1:AddToggle({
+local togBuy = Tab4:AddToggle({
     Name = lang[SelectedLanguage].btn_buy, Default = false,
     Callback = function(v)
         autoBuyPet = v
@@ -202,8 +199,8 @@ local togBuy = Tab1:AddToggle({
     end
 })
 
-local secVis = Tab1:AddSection({Name = lang[SelectedLanguage].sec_vis})
-local togEsp = Tab1:AddToggle({
+local secVis = Tab4:AddSection({Name = lang[SelectedLanguage].sec_vis})
+local togEsp = Tab4:AddToggle({
     Name = lang[SelectedLanguage].btn_esp, Default = false,
     Callback = function(v)
         espEnabled = v
@@ -228,7 +225,7 @@ local togEsp = Tab1:AddToggle({
     end
 })
 
--- SELECTOR DE IDIOMA MAESTRO POR JERARQUÍA DE UI DE ROBLOX
+-- SELECTOR DE IDIOMA MAESTRO POR JERARQUÍA DE UI DE ROBLOX (SIN CAMINADORAS NI TP)
 Tab1:AddDropdown({
     Name = "Language / Idioma", Default = "Español", Options = {"Español", "English"},
     Callback = function(opt)
@@ -236,6 +233,12 @@ Tab1:AddDropdown({
         pcall(function()
             local orionGui = game:GetService("CoreGui"):FindFirstChild("Orion") or game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Orion")
             if orionGui then
+                for _, btn in pairs(orionGui:GetDescendants()) do
+                    if btn:IsA("TextButton") and btn.Name == "TabButton" then
+                        if btn.Text == "Farming" then btn.Text = lang[SelectedLanguage].t_farm end
+                        if btn.Text == "Crystals (Pets)" then btn.Text = lang[SelectedLanguage].t_pets end
+                    end
+                end
                 for _, label in pairs(orionGui:GetDescendants()) do
                     if label:IsA("TextLabel") or label:IsA("TextBox") then
                         if label.Text == lang.ES.f_strength or label.Text == lang.EN.f_strength then label.Text = lang[SelectedLanguage].f_strength end
