@@ -10,7 +10,7 @@ local espEnabled = false
 -- Diccionario maestro para traducción masiva por UI de Roblox
 local lang = {
     ES = {
-        title = "Muscle legends | Equinox hub", notify = "¡Idioma cambiado a Español!",
+        title = "Muscle legends | idk hub", notify = "¡Idioma cambiado a Español!",
         f_strength = "Farming de Fuerza", f_durability = "script de Durabilidad", f_rebirth = "Renacimientos",
         btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep", btn_rock = "Auto Fast Rock Hit (Glitch)",
         btn_reb = "Auto Rebirth", drop_rock = "Seleccionar Roca", drop_pet = "Seleccionar Mascota o Aura",
@@ -19,7 +19,7 @@ local lang = {
         lang_select = "Seleccionar Idioma / Select Language", t_farm = "Farming", t_pets = "Crystals (Pets)"
     },
     EN = {
-        title = "Muscle legends | Equinox hub", notify = "Language changed to English!",
+        title = "Muscle legends | idk hub", notify = "Language changed to English!",
         f_strength = "Strength Farming", f_durability = "Durability Script", f_rebirth = "Rebirths",
         btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep", btn_rock = "Auto Fast Rock Hit (Glitch)",
         btn_reb = "Auto Rebirth", drop_rock = "Select Rock", drop_pet = "Select Pet or Aura",
