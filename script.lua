@@ -6,7 +6,7 @@ local selectedRockName = "Tiny Rock"
 local selectedUniqueItem = "Apex Overlord"
 local autoRep, fastRep, autoReb, autoRockGlitch, autoBuyPet = false, false, false, false, false
 local espEnabled = false
-
+    
 -- Diccionario maestro para traducción masiva por UI de Roblox
 local lang = {
     ES = {
