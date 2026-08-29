@@ -13,7 +13,7 @@ local lang = {
         title = "Muscle legends | Equinox hub", notify = "¡Idioma cambiado a Español!",
         f_strength = "Farming de Fuerza", f_durability = "script de Durabilidad", f_rebirth = "Renacimientos",
         btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep", btn_rock = "Auto Fast Rock Hit (Glitch)",
-        btn_reb = "Auto Rebirth Inteligente", drop_rock = "Seleccionar Roca", drop_pet = "Seleccionar Mascota o Aura",
+        btn_reb = "Auto Rebirth", drop_rock = "Seleccionar Roca", drop_pet = "Seleccionar Mascota o Aura",
         btn_buy = "Auto Comprar Mascota/Aura", sec_est = "Estabilidad", sec_tienda = "Mascotas y Auras (Glitch Países Bajos)",
         sec_vis = "Visuales", btn_lag = "Activar Anti-Lag 100%", btn_crash = "Activar Anti-Crash", btn_esp = "Jugadores ESP (Wallhack)",
         lang_select = "Seleccionar Idioma / Select Language", t_farm = "Farming", t_pets = "Crystals (Pets)"
@@ -22,7 +22,7 @@ local lang = {
         title = "Muscle legends | Equinox hub", notify = "Language changed to English!",
         f_strength = "Strength Farming", f_durability = "Durability Script", f_rebirth = "Rebirths",
         btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep", btn_rock = "Auto Fast Rock Hit (Glitch)",
-        btn_reb = "Smart Auto Rebirth", drop_rock = "Select Rock", drop_pet = "Select Pet or Aura",
+        btn_reb = "Auto Rebirth", drop_rock = "Select Rock", drop_pet = "Select Pet or Aura",
         btn_buy = "Auto Buy Pet/Aura", sec_est = "Stability", sec_tienda = "Pets & Auras (Netherlands Glitch)",
         sec_vis = "Visuals", btn_lag = "Enable Anti-Lag 100%", btn_crash = "Enable Anti-Crash", btn_esp = "Player ESP (Wallhack)",
         lang_select = "Select Language / Seleccionar Idioma", t_farm = "Farming", t_pets = "Crystals (Pets)"
