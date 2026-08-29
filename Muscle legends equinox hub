@@ -36,7 +36,41 @@ Name = <string> - The name of the section.
 local autoRep = false
 
 Tab:AddToggle({
-    Name = "Auto Rep (Entrenar)",
+    Name = "Auto Rep",
+    Default = false, -- Empieza apagado
+    Callback = function(Value)
+        autoRep = Value -- 'Value' será true si se activa, o false si se desactiva
+        
+        -- Si el usuario activó el switch, iniciamos el bucle en un hilo separado
+        if autoRep then
+            task.spawn(function()
+                local Event = game:GetService("Players").LocalPlayer:FindFirstChild("muscleEvent")
+                
+                -- El bucle corre MIENTRAS el switch esté encendido y el evento exista
+                while autoRep and Event do
+                    Event:FireServer("rep")
+                    task.wait(0.3) -- Retraso de 0.1 segundos para evitar lag o kick
+                end
+            end)
+        end
+    end    
+})
+
+--[[
+Explicación de las propiedades:
+Name = <string> - El texto que aparece al lado del switch.
+Default = <boolean> - Define si el switch inicia encendido (true) o apagado (false).
+Callback = <function> - La función que se ejecuta cada vez que el usuario presiona el switch.
+]]
+
+
+
+
+
+local autoReb = false
+
+Tab:AddToggle({
+    Name = "Auto Rebirth",
     Default = false, -- Empieza apagado
     Callback = function(Value)
         autoRep = Value -- 'Value' será true si se activa, o false si se desactiva
