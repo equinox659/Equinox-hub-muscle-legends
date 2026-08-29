@@ -135,7 +135,7 @@ local lang = {
     t_pets = "Crystals (Pets)", t_tp = "Teleports", sec_tp = "Instant Island Travel", 
     drop_tp = "Select Destination", btn_tp = "Teleport Now", btn_dc = "Copy Discord Link",
     sec_lock = "Position Stability", btn_lock = "Lock Position (Anchor Character)",
-    sec_evolve = "Evolución de Mascotas", btn_evolve = "Auto Evolucionar Mascotas (Loop)"
+    sec_evolve = "Evolución de Mascotas", btn_evolve = "Auto evolve pets (switch Loop)"
   }
 }
 
