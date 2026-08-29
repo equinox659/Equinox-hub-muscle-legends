@@ -1,3 +1,80 @@
+-- ====================================================================
+-- SISTEMA DE VERIFICACIÓN CUSTOM (BYPASS BACKEND ROTO DE ORIONLIB)
+-- ====================================================================
+local Player = game:GetService("Players").LocalPlayer
+local CoreGui = game:GetService("CoreGui")
+local Validated = false
+
+-- Crear una interfaz nativa limpia para pedir la llave
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local TitleLabel = Instance.new("TextLabel")
+local KeyInput = Instance.new("TextBox")
+local VerifyBtn = Instance.new("TextButton")
+
+ScreenGui.Name = "AFXKeySystem"
+ScreenGui.Parent = CoreGui or Player.PlayerGui
+ScreenGui.ResetOnSpawn = false
+
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 320, 0, 180)
+MainFrame.Position = UDim2.new(0.5, -160, 0.5, -90)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
+
+TitleLabel.Size = UDim2.new(1, 0, 0, 40)
+TitleLabel.Text = "AFX|ALPHA FOR X SCRIPT"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.TextSize = 18
+TitleLabel.Parent = MainFrame
+
+KeyInput.Size = UDim2.new(0, 260, 0, 40)
+KeyInput.Position = UDim2.new(0.5, -130, 0.4, 0)
+KeyInput.PlaceholderText = "Enter Key"
+KeyInput.Text = ""
+KeyInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyInput.Font = Enum.Font.SourceSans
+KeyInput.TextSize = 16
+KeyInput.Parent = MainFrame
+
+VerifyBtn.Size = UDim2.new(0, 140, 0, 35)
+VerifyBtn.Position = UDim2.new(0.5, -70, 0.75, 0)
+VerifyBtn.Text = "VERIFY / VERIFICAR"
+VerifyBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+VerifyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+VerifyBtn.Font = Enum.Font.SourceSansBold
+VerifyBtn.TextSize = 16
+VerifyBtn.Parent = MainFrame
+
+-- Lógica de validación estricta
+VerifyBtn.MouseButton1Click:Connect(function()
+    if KeyInput.Text == "AFXONTOP" then -- TU LLAVE EXACTA SOLICITADA
+        Validated = true
+        ScreenGui:Destroy()
+    else
+        KeyInput.Text = ""
+        KeyInput.PlaceholderText = "WRONG KEY! / LLAVE INCORRECTA!"
+        KeyInput.PlaceholderColor3 = Color3.fromRGB(255, 0, 0)
+    end
+end)
+
+-- Si el jugador intenta cerrar el script de fondo o eliminar la GUI sin verificar, se le expulsa
+task.spawn(function()
+    task.wait(60) -- 1 minuto máximo para poner la llave o da kick
+    if not Validated then
+        Player:text("Equinox Hub: Verification Timeout / Tiempo de espera agotado.")
+    end
+end)
+
+while not Validated do task.wait(0.1) end -- Pausa la ejecución de Lua hasta que ponga la llave real
+
+
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jensonhirst/Orion/main/source')))()
 
 -- Variables globales de estado
@@ -25,7 +102,7 @@ local lang = {
     EN = {
         title = "AFX|ALPHA FOR X SCRIPT", notify = "¡Idioma cambiado a Español!",
         f_strength = "Farming de Fuerza", f_durability = "Exploit de Durabilidad (Manual)", f_rebirth = "Renacimientos",
-        btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep", btn_rock = "Auto Fast Rock Hit (Glitch)",
+        btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep (AFX x15)", btn_rock = "Auto Fast Rock Hit (Glitch)",
         btn_reb = "Auto Rebirth", drop_rock = "Seleccionar Roca", drop_pet = "Seleccionar Mascota o Aura",
         btn_buy = "Auto Comprar Mascota/Aura", sec_est = "Estabilidad", sec_tienda = "Mascotas y Auras (Glitch Países Bajos)",
         btn_lift = "free Auto lift",
@@ -36,7 +113,7 @@ local lang = {
     ES = {
         title = "AFX|ALPHA FOR X SCRIPT", notify = "Language changed to English!",
         f_strength = "Strength Farming", f_durability = "Durability Exploit (Manual)", f_rebirth = "Rebirths",
-        btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep", btn_rock = "Auto Fast Rock Hit (Glitch)",
+        btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep (AFX x15)", btn_rock = "Auto Fast Rock Hit (Glitch)",
         btn_reb = "Auto Rebirth", drop_rock = "Select Rock", drop_pet = "Select Pet or Aura",
         btn_buy = "Auto Buy Pet/Aura", sec_est = "Stability", sec_tienda = "Pets & Auras (Netherlands Glitch)",
         btn_lift = "free Auto lift",
@@ -46,7 +123,21 @@ local lang = {
     }
 }
 
-local Window = OrionLib:MakeWindow({Name = lang[SelectedLanguage].title, HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+local Window = OrionLib:MakeWindow({
+    Name = lang[SelectedLanguage].title, 
+    HidePremium = false, 
+    SaveConfig = true, 
+    ConfigFolder = "OrionTest",
+    KeySystem = true, -- Forzamos el validador nativo
+    Title = "AFX|ALPHA FOR X SCRIPT Verification",
+    Description = "",
+    KeySettings = {
+        Title = "Key System",
+        Description = "Enter the Key to execute AFX|ALPHA FOR X SCRIPT",
+        Key = "AFXONTOP", -- TU LLAVE SOLICITADA
+        ResetKey = false
+    }
+})
 
 local RocksConfig = {
     ["Industrial Rock"] = 25000000, ["Jungle Rock"] = 10000000, ["Muscle King Rock"] = 5000000,
@@ -186,6 +277,32 @@ local togReb = Tab1:AddToggle({
         end
     end    
 })
+
+-- Botón para que se unan a tu servidor de Discord
+Tab1:AddButton({
+    Name = "Copy Discord Link",
+    Callback = function()
+        -- Función universal de los ejecutores (Delta/Solara) para copiar al portapapeles
+        if setclipboard then
+            setclipboard("https://discord.gg/E2pqFpseE")
+            
+            -- Notificación visual para avisarle al jugador que ya se copió
+            OrionLib:MakeNotification({
+                Name = "Discord",
+                Content = "¡Enlace copiado al portapapeles! / Link copied to clipboard!",
+                Time = 4
+            })
+        else
+            -- Aviso de emergencia si el inyector no soporta la función (muy raro)
+            OrionLib:MakeNotification({
+                Name = "Error",
+                Content = "Tu ejecutor no soporta copiar automáticamente.",
+                Time = 4
+            })
+        end
+    end
+})
+
 
 -- PESTAÑA 2: CONTENIDO DE TELEPORTS (SECCIÓN NUEVA SOLICITADA)
 local secTp = Tab2:AddSection({Name = lang[SelectedLanguage].sec_tp})
