@@ -1,0 +1,58 @@
+-- ====================================================================
+-- LOADER INTELIGENTE: EQUINOX HUB (Muscle Legends)
+-- ====================================================================
+
+-- TABLA DE USUARIOS PREMIUM (Pon las IDs de tus amigos aquí)
+local PremiumUsers = {
+    [game:GetService("Players").LocalPlayer.UserId] = true, -- Tu ID automática
+    [12345678] = true, -- Reemplaza con la ID de tu amigo 1
+    [87654321] = true  -- Reemplaza con la ID de tu amigo 2
+}
+
+-- Función para verificar el rango en la base de datos local
+local function isUserPremium()
+    local myId = game:GetService("Players").LocalPlayer.UserId
+    return PremiumUsers[myId] == true
+end
+
+-- Inicializamos OrionLib solo para la interfaz del Loader
+local OrionLib = loadstring(game:HttpGet(('https://githubusercontent.com')))()
+local Window = OrionLib:MakeWindow({Name = "Equinox Loader", HidePremium = false, SaveConfig = false, ConfigFolder = "LoaderML"})
+
+local Tab = Window:MakeTab({Name = "Scripts", Icon = "", PremiumOnly = false})
+Tab:AddSection({Name = "Selecciona tu versión / Select your version"})
+
+-- BOTÓN 1: SCRIPT GRATUITO (Disponible para absolutamente todos)
+Tab:AddButton({
+    Name = "Cargar Script Gratis (Free Script)",
+    Callback = function()
+        OrionLib:Destroy() -- Cierra la ventana del loader para abrir el Hub principal
+        task.wait(0.5)
+        -- Descarga tu script gratis directo de tu GitHub Raw
+        loadstring(game:HttpGet(("https://githubusercontent.com")))()
+    end
+})
+
+-- BOTÓN 2: SCRIPT PREMIUM (Bloqueado por ID)
+Tab:AddButton({
+    Name = "Cargar Script Premium (VIP)",
+    Callback = function()
+        if isUserPremium() then
+            OrionLib:Destroy() -- Cierra el loader si tiene acceso
+            task.wait(0.5)
+            -- Descarga el script Premium de tu archivo de GitHub privado o alternativo
+            -- (Cambia la palabra "PREMIUM_FILE" por el nombre real de tu archivo premium en tu GitHub)
+            loadstring(game:HttpGet(("https://githubusercontent.com")))()
+        else
+            -- Mensaje de rechazo si la ID no coincide con tu lista de arriba
+            OrionLib:MakeNotification({
+                Name = "Acceso Denegado / Access Denied",
+                Content = "No tienes acceso al script premium. / You do not have access to the premium script.",
+                Image = "rbxassetid://4483345991",
+                Time = 6
+            })
+        end
+    end
+})
+
+OrionLib:Init()
