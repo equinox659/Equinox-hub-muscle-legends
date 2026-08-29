@@ -95,7 +95,7 @@ local togFast = Tab1:AddToggle({
 local secDur = Tab1:AddSection({Name = lang[SelectedLanguage].f_durability})
 local dropRock = Tab1:AddDropdown({
     Name = lang[SelectedLanguage].drop_rock, Default = "Tiny Rock",
-    Options = {"Tiny Rock", "Starter Rock", "Beach Rock", "Frost Rock", "Mythical Rock", "Eternal Rock", "Legend Rock", "Muscle King Rock", "Ancient Rock", "Industrial Jungle Rock"},
+    Options = {"Tiny Rock", "Starter Rock", "Beach Rock", "Frost Rock", "Mythical Rock", "Eternal Rock", "Legend Rock", "Muscle King Rock", "Jungle Rock", "Industrial Rock"},
     Callback = function(opt) selectedRockName = opt end
 })
 
