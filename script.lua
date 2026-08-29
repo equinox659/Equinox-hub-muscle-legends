@@ -25,7 +25,7 @@ local lang = {
     EN = {
         title = "AFX|ALPHA FOR X SCRIPT", notify = "¡Idioma cambiado a Español!",
         f_strength = "Farming de Fuerza", f_durability = "Exploit de Durabilidad (Manual)", f_rebirth = "Renacimientos",
-        btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep (AFX x15)", btn_rock = "Auto Fast Rock Hit (Glitch)",
+        btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep", btn_rock = "Auto Fast Rock Hit (Glitch)",
         btn_reb = "Auto Rebirth", drop_rock = "Seleccionar Roca", drop_pet = "Seleccionar Mascota o Aura",
         btn_buy = "Auto Comprar Mascota/Aura", sec_est = "Estabilidad", sec_tienda = "Mascotas y Auras (Glitch Países Bajos)",
         btn_lift = "free Auto lift",
@@ -36,7 +36,7 @@ local lang = {
     ES = {
         title = "AFX|ALPHA FOR X SCRIPT", notify = "Language changed to English!",
         f_strength = "Strength Farming", f_durability = "Durability Exploit (Manual)", f_rebirth = "Rebirths",
-        btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep (AFX x15)", btn_rock = "Auto Fast Rock Hit (Glitch)",
+        btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep", btn_rock = "Auto Fast Rock Hit (Glitch)",
         btn_reb = "Auto Rebirth", drop_rock = "Select Rock", drop_pet = "Select Pet or Aura",
         btn_buy = "Auto Buy Pet/Aura", sec_est = "Stability", sec_tienda = "Pets & Auras (Netherlands Glitch)",
         btn_lift = "free Auto lift",
