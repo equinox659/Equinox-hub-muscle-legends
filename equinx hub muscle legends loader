@@ -2,54 +2,48 @@
 -- LOADER INTELIGENTE: EQUINOX HUB (Muscle Legends)
 -- ====================================================================
 
--- TABLA DE USUARIOS PREMIUM (Pon las IDs de tus amigos aquí)
 local PremiumUsers = {
-    [game:GetService("Players").LocalPlayer.UserId] = true, -- Tu ID automática
-    [12345678] = true, -- Reemplaza con la ID de tu amigo 1
-    [87654321] = true  -- Reemplaza con la ID de tu amigo 2
+    [game:GetService("Players").LocalPlayer.UserId] = false, -- Tu ID automática
+    [12345678] = true, -- ID de tu amigo 1
+    [87654321] = true  -- ID de tu amigo 2
 }
 
--- Función para verificar el rango en la base de datos local
 local function isUserPremium()
-    local myId = game:GetService("Players").LocalPlayer.UserId
-    return PremiumUsers[myId] == true
+    return PremiumUsers[game:GetService("Players").LocalPlayer.UserId] == true
 end
 
--- Inicializamos OrionLib solo para la interfaz del Loader
-local OrionLib = loadstring(game:HttpGet(('https://githubusercontent.com')))()
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jensonhirst/Orion/main/source')))()
 local Window = OrionLib:MakeWindow({Name = "Equinox Loader", HidePremium = false, SaveConfig = false, ConfigFolder = "LoaderML"})
 
 local Tab = Window:MakeTab({Name = "Scripts", Icon = "", PremiumOnly = false})
 Tab:AddSection({Name = "Selecciona tu versión / Select your version"})
 
--- BOTÓN 1: SCRIPT GRATUITO (Disponible para absolutamente todos)
+-- BOTÓN GRATIS: Descarga tu script real de GitHub en formato RAW
 Tab:AddButton({
-    Name = "Cargar Script Gratis (Free Script)",
+    Name = "Cargar Script Gratis (Free Hub)",
     Callback = function()
-        OrionLib:Destroy() -- Cierra la ventana del loader para abrir el Hub principal
+        OrionLib:Destroy()
         task.wait(0.5)
-        -- Descarga tu script gratis directo de tu GitHub Raw
-        loadstring(game:HttpGet(("https://githubusercontent.com")))()
+        loadstring(game:HttpGet(("https://github.com/equinox659/Equinox-hub-muscle-legends/blob/main/Muscle%20legends%20equinox%20hub"))()
     end
 })
 
--- BOTÓN 2: SCRIPT PREMIUM (Bloqueado por ID)
+-- BOTÓN PREMIUM: Controla accesos y avisa el estado WIP
 Tab:AddButton({
-    Name = "Cargar Script Premium (VIP)",
+    Name = "Vip hub",
     Callback = function()
         if isUserPremium() then
-            OrionLib:Destroy() -- Cierra el loader si tiene acceso
-            task.wait(0.5)
-            -- Descarga el script Premium de tu archivo de GitHub privado o alternativo
-            -- (Cambia la palabra "PREMIUM_FILE" por el nombre real de tu archivo premium en tu GitHub)
-            loadstring(game:HttpGet(("https://githubusercontent.com")))()
+            -- Si es Premium pero está en desarrollo, muestra este aviso
+            OrionLib:MakeNotification({
+                Name = "WIP (In progress)",
+                Content = "The vip version is in progress",
+                Time = 5
+            })
         else
-            -- Mensaje de rechazo si la ID no coincide con tu lista de arriba
             OrionLib:MakeNotification({
                 Name = "Acceso Denegado / Access Denied",
-                Content = "No tienes acceso al script premium. / You do not have access to the premium script.",
-                Image = "rbxassetid://4483345991",
-                Time = 6
+                Content = "No tienes acceso al script premium. / You do not have access.",
+                Time = 5
             })
         end
     end
