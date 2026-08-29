@@ -1,9 +1,10 @@
--- ====================================================================
--- LOADER INTELIGENTE: EQUINOX HUB (Muscle Legends)
--- ====================================================================
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jensonhirst/Orion/main/source')))()
 
+-- ====================================================================
+-- CONFIGURACIÓN DEL SISTEMA PREMIUM
+-- ====================================================================
 local PremiumUsers = {
-    [game:GetService("Players").LocalPlayer.UserId] = false, -- Tu ID automática
+    [game:GetService("Players").LocalPlayer.UserId] = false, -- Cambiado a false para que pruebes el bloqueo en ti mismo
     [12345678] = true, -- ID de tu amigo 1
     [87654321] = true  -- ID de tu amigo 2
 }
@@ -12,19 +13,19 @@ local function isUserPremium()
     return PremiumUsers[game:GetService("Players").LocalPlayer.UserId] == true
 end
 
-local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jensonhirst/Orion/main/source')))()
 local Window = OrionLib:MakeWindow({Name = "Equinox Loader", HidePremium = false, SaveConfig = false, ConfigFolder = "LoaderML"})
 
 local Tab = Window:MakeTab({Name = "Scripts", Icon = "", PremiumOnly = false})
 Tab:AddSection({Name = "Selecciona tu versión / Select your version"})
 
--- BOTÓN GRATIS: Descarga tu script real de GitHub en formato RAW
+-- BOTÓN GRATIS: Configurado con la nueva URL limpia y directa de texto plano
 Tab:AddButton({
     Name = "Cargar Script Gratis (Free Hub)",
     Callback = function()
         OrionLib:Destroy()
         task.wait(0.5)
-        loadstring(game:HttpGet(("https://github.com/equinox659/Equinox-hub-muscle-legends/blob/main/Muscle%20legends%20equinox%20hub"))()
+        -- URL definitiva apuntando al archivo renombrado como script.lua
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/equinox659/Equinox-hub-muscle-legends/refs/heads/main/script.lua"))()
     end
 })
 
@@ -33,7 +34,6 @@ Tab:AddButton({
     Name = "Vip hub",
     Callback = function()
         if isUserPremium() then
-            -- Si es Premium pero está en desarrollo, muestra este aviso
             OrionLib:MakeNotification({
                 Name = "WIP (In progress)",
                 Content = "The vip version is in progress",
