@@ -150,7 +150,7 @@ local RocksConfig = {
 -- ====================================================================
 local Window = OrionLib:MakeWindow({
   Name = lang[SelectedLanguage].title, HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest", KeySystem = true,
-  Title = "AFX|ALPHA FOR X SCRIPT Verification", Description = "",
+  Title = "AFX|ALPHA FOR X SCRIPT Verification", Description = "Update 1.1. Added AUTO EVO PET",
   KeySettings = { Title = "Key System", Description = "Enter the Key to execute AFX|ALPHA FOR X SCRIPT", Key = "AFXONTOP", ResetKey = false }
 })
 
@@ -364,7 +364,7 @@ Tab3:AddToggle({
                   
                   OrionLib:MakeNotification({
                     Name = "Evolved Pet", 
-                    Content = "Evolving" .. petName, 
+                    Content = "Evolving " .. petName, 
                     Time = 1.0
                   })
                   task.wait(0.5) -- Espera para dejar que el servidor procese la fusión antes de volver a contar
