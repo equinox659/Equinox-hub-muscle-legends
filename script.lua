@@ -111,7 +111,7 @@ local TP_Locations = {
 
 -- Diccionario maestro traducible
 local lang = {
-  EN = {
+  ES = {
     title = "AFX|ALPHA FOR X SCRIPT", notify = "¡Idioma cambiado a Español!",
     f_strength = "Farming de Fuerza", f_durability = "Exploit de Durabilidad (Manual)", f_rebirth = "Renacimientos",
     btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep (AFX x15)", btn_rock = "Auto Fast Rock Hit (Glitch)",
@@ -124,7 +124,7 @@ local lang = {
     sec_lock = "Estabilidad de Posición", btn_lock = "Lock Position (Anclar Personaje)",
     sec_evolve = "Pet Evolution", btn_evolve = "Auto Evolve Pets (Loop)"
   },
-  ES = {
+  EN = {
     title = "AFX|ALPHA FOR X SCRIPT", notify = "Language changed to English!",
     f_strength = "Strength Farming", f_durability = "Durability Exploit (Manual)", f_rebirth = "Rebirths",
     btn_normal = "Auto Rep (Normal)", btn_fast = "Auto Fast Rep (AFX x15)", btn_rock = "Auto Fast Rock Hit (Glitch)",
@@ -363,7 +363,7 @@ Tab3:AddToggle({
                   Event:FireServer("evolvePet", petName)
                   
                   OrionLib:MakeNotification({
-                    Name = "Evolved Pet", 
+                    Name = "Evolved Pet ", 
                     Content = "Evolving " .. petName, 
                     Time = 1.0
                   })
