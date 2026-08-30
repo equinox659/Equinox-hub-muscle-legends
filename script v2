@@ -1,0 +1,47 @@
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/memejames/elerium-v2-ui-library//main/Library", true))()
+
+
+
+local window = library:AddWindow("Name GUI", {
+	main_color = Color3.fromRGB(41, 74, 122), -- Color
+	min_size = Vector2.new(500, 346), -- Size of the gui
+	can_resize = false, -- true or false
+})
+
+local features = window:AddTab("Auto farming") -- Name of tab
+features:Show() -- shows the tab
+
+local switch = features:AddSwitch("Free auto lift", function(bool)
+    local localPlayer = game:GetService("Players").LocalPlayer
+    if localPlayer then
+        localPlayer:SetAttribute("AutoLiftEnabled", bool)
+    end
+end)
+
+switch:Set(false)
+
+local switch = features:AddSwitch("Auto fast rep (packs)", function(bool)
+    fastRep = bool
+    
+    if fastRep then
+        task.spawn(function()
+            local pl = game:GetService("Players").LocalPlayer
+            local ev = pl:FindFirstChild("muscleEvent")
+            
+            while fastRep and ev do
+                for i = 1, 15 do 
+                    task.spawn(function() 
+                        ev:FireServer("rep") 
+                    end) 
+                end
+                task.wait(0.01)
+            end
+        end)
+    end
+end)
+
+switch:Set(false)
+
+
+local features = window:AddTab("teleports") -- Name of tab
+features:Show() -- shows the tab
