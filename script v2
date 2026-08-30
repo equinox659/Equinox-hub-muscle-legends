@@ -1,47 +1,384 @@
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/memejames/elerium-v2-ui-library//main/Library", true))()
+-- ====================================================================
+-- SISTEMA DE VERIFICACIÓN CUSTOM (BYPASS)
+-- ====================================================================
+local Player = game:GetService("Players").LocalPlayer
+local CoreGui = game:GetService("CoreGui")
+local Validated = false
 
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local TitleLabel = Instance.new("TextLabel")
+local KeyInput = Instance.new("TextBox")
+local VerifyBtn = Instance.new("TextButton")
 
+ScreenGui.Name = "AFXKeySystem"
+ScreenGui.Parent = CoreGui or Player.PlayerGui
+ScreenGui.ResetOnSpawn = false
 
-local window = library:AddWindow("Name GUI", {
-	main_color = Color3.fromRGB(41, 74, 122), -- Color
-	min_size = Vector2.new(500, 346), -- Size of the gui
-	can_resize = false, -- true or false
-})
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 320, 0, 180)
+MainFrame.Position = UDim2.new(0.5, -160, 0.5, -90)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
 
-local features = window:AddTab("Auto farming") -- Name of tab
-features:Show() -- shows the tab
+TitleLabel.Size = UDim2.new(1, 0, 0, 40)
+TitleLabel.Text = "AFX|ALPHA FOR X SCRIPT"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.TextSize = 18
+TitleLabel.Parent = MainFrame
 
-local switch = features:AddSwitch("Free auto lift", function(bool)
-    local localPlayer = game:GetService("Players").LocalPlayer
-    if localPlayer then
-        localPlayer:SetAttribute("AutoLiftEnabled", bool)
+KeyInput.Size = UDim2.new(0, 260, 0, 40)
+KeyInput.Position = UDim2.new(0.5, -130, 0.4, 0)
+KeyInput.PlaceholderText = "Enter Key"
+KeyInput.Text = ""
+KeyInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyInput.Font = Enum.Font.SourceSans
+KeyInput.TextSize = 16
+KeyInput.Parent = MainFrame
+
+VerifyBtn.Size = UDim2.new(0, 140, 0, 35)
+VerifyBtn.Position = UDim2.new(0.5, -70, 0.75, 0)
+VerifyBtn.Text = "VERIFY / VERIFICAR"
+VerifyBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+VerifyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+VerifyBtn.Font = Enum.Font.SourceSansBold
+VerifyBtn.TextSize = 16
+VerifyBtn.Parent = MainFrame
+
+VerifyBtn.MouseButton1Click:Connect(function()
+    if KeyInput.Text == "AFXONTOP" then
+        Validated = true
+        ScreenGui:Destroy()
+    else
+        KeyInput.Text = ""
+        KeyInput.PlaceholderText = "WRONG KEY! / LLAVE INCORRECTA!"
+        KeyInput.PlaceholderColor3 = Color3.fromRGB(255, 0, 0)
     end
 end)
 
-switch:Set(false)
+task.spawn(function()
+    task.wait(60)
+    if not Validated then
+        Player:text(" Verification Timeout / Tiempo de espera agotado.")
+    end
+end)
 
-local switch = features:AddSwitch("Auto fast rep (packs)", function(bool)
+while not Validated do task.wait(0.1) end
+
+-- ====================================================================
+-- CARGA DE LA LIBRERÍA ELERIUM V2 (MEMEJAMES URL)
+-- ====================================================================
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/memejames/elerium-v2-ui-library//main/Library", true))()
+
+-- Variables globales
+local selectedRockName = "Tiny Rock"
+local selectedUniqueItem = "Apex Overlord"
+local selectedDestination = "Spawn"
+
+local autoRep = false
+local fastRep = false
+local autoLift = false
+local autoReb = false
+local autoRockGlitch = false
+local autoBuyPet = false
+local autoEvolve = false
+local lockPositionEnabled = false
+local espEnabled = false
+
+local TP_Locations = {
+    ["Spawn"] = CFrame.new(0, 4, 0),
+    ["Frost Island"] = CFrame.new(-2917.47314, 12.1008654, -178.445648, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+    ["Mythical Island"] = CFrame.new(2250.77808, 28.6999931, 1073.22668, 0, 0, -1, 0, 1, 0, 1, 0, 0),
+    ["Eternal Island"] = CFrame.new(-7173.3418, 40.8608437, -1092.33618, -1, 0, 0, 0, 1, 0, 0, 0, -1),
+    ["Legend Island"] = CFrame.new(4551.51514, 997.727234, -4018.90186, -0.642763734, 0, 0.766064942, 0, 1, 0, -0.766064942, 0, -0.642763734),
+    ["Muscle King Gym"] = CFrame.new(-8772.97266, 24.4272194, -5638.37402, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+    ["Industrial Gym"] = CFrame.new(-5000, 129.197, 5000)
+}
+
+local RocksConfig = {
+    ["Industrial Rock"] = 25000000, ["Jungle Rock"] = 10000000, ["Muscle King Rock"] = 5000000,
+    ["Legend Rock"] = 1000000, ["Eternal Rock"] = 750000, ["Mythical Rock"] = 400000,
+    ["Frost Rock"] = 150000, ["Beach Rock"] = 5000, ["Starter Rock"] = 100, ["Tiny Rock"] = 0
+}
+
+local function findPhysicalRock(requiredDurability)
+    local folder = workspace:FindFirstChild("machinesFolder")
+    if not folder then return nil end
+    for _, machine in ipairs(folder:GetDescendants()) do
+        if machine.Name == "neededDurability" and machine:IsA("ValueBase") and tonumber(machine.Value) == requiredDurability then
+            local rockMesh = machine.Parent and machine.Parent:FindFirstChild("Rock")
+            if rockMesh and rockMesh:IsA("BasePart") then return rockMesh end
+        end
+    end
+    return nil
+end
+
+local function autoEquipPunch()
+    local player = game:GetService("Players").LocalPlayer
+    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+    local punch = player.Character:FindFirstChild("Punch") or player.Backpack:FindFirstChild("Punch")
+    if punch and humanoid and punch.Parent ~= player.Character then humanoid:EquipTool(punch) end
+end
+
+-- CREAR VENTANA PRINCIPAL
+local window = library:AddWindow("AFX|ALPHA FOR X SCRIPT", {
+    main_color = Color3.fromRGB(0, 150, 255),
+    min_size = Vector2.new(280, 360),
+    can_resize = false,
+})
+
+-- PESTAÑAS (TABS) DIRECTAS
+local Tab1 = window:AddTab("Farming")
+Tab1:Show()
+
+local Tab2 = window:AddTab("Teleports")
+local Tab3 = window:AddTab("Crystals & Pets")
+
+-- ====================================================================
+-- PESTAÑA 1: FARMING (DIRECTO, SIN FOLDERS)
+-- ====================================================================
+Tab1:AddLabel("--- Strength Farming ---")
+
+Tab1:AddSwitch("Auto Rep (Normal)", function(bool)
+    autoRep = bool
+    if autoRep then
+        task.spawn(function()
+            local ev = game:GetService("Players").LocalPlayer:FindFirstChild("muscleEvent")
+            while autoRep and ev do ev:FireServer("rep") task.wait(0.3) end
+        end)
+    end
+end)
+
+Tab1:AddSwitch("Auto Fast Rep (AFX x15)", function(bool)
     fastRep = bool
-    
     if fastRep then
         task.spawn(function()
             local pl = game:GetService("Players").LocalPlayer
             local ev = pl:FindFirstChild("muscleEvent")
-            
             while fastRep and ev do
-                for i = 1, 15 do 
-                    task.spawn(function() 
-                        ev:FireServer("rep") 
-                    end) 
-                end
-                task.wait(0.01)
+                for i = 1, 15 do task.spawn(function() ev:FireServer("rep") end) end
+                task.wait(0.001)
             end
         end)
     end
 end)
 
-switch:Set(false)
+Tab1:AddSwitch("free Auto lift", function(bool)
+    autoLift = bool
+    game:GetService("Players").LocalPlayer:SetAttribute("AutoLiftEnabled", autoLift)
+end)
 
+Tab1:AddLabel("--- Durability Glitch ---")
 
-local features = window:AddTab("teleports") -- Name of tab
-features:Show() -- shows the tab
+local dropRock = Tab1:AddDropdown("Select Rock", function(text)
+    selectedRockName = text
+end)
+dropRock:Add("Tiny Rock")
+dropRock:Add("Starter Rock")
+dropRock:Add("Beach Rock")
+dropRock:Add("Frost Rock")
+dropRock:Add("Mythical Rock")
+dropRock:Add("Eternal Rock")
+dropRock:Add("Legend Rock")
+dropRock:Add("Muscle King Rock")
+dropRock:Add("Jungle Rock")
+dropRock:Add("Industrial Rock")
+
+Tab1:AddSwitch("Auto Fast Rock Hit", function(bool)
+    autoRockGlitch = bool
+    if autoRockGlitch then
+        task.spawn(function()
+            local player = game:GetService("Players").LocalPlayer
+            local ev = player:FindFirstChild("muscleEvent")
+            while autoRockGlitch and ev do
+                autoEquipPunch()
+                local targetDurability = RocksConfig[selectedRockName] or 0
+                local physicalRock = findPhysicalRock(targetDurability)
+                local char = player.Character
+                local leftHand = char and char:FindFirstChild("LeftHand")
+                local rightHand = char and char:FindFirstChild("RightHand")
+                if physicalRock and leftHand and rightHand then
+                    pcall(function() physicalRock.Size = Vector3.new(2, 1, 1) physicalRock.Transparency, physicalRock.CanCollide = 1, false physicalRock.CFrame = rightHand.CFrame end)
+                    if type(firetouchinterest) == "function" then firetouchinterest(physicalRock, rightHand, 0) firetouchinterest(physicalRock, rightHand, 1) end
+                    pcall(function() ev:FireServer("punch", "leftHand") ev:FireServer("punch", "rightHand") end)
+                end
+                task.wait(0.001)
+            end
+        end)
+    end
+end)
+
+Tab1:AddLabel("--- Rebirth & Position ---")
+
+Tab1:AddSwitch("Auto Rebirth", function(bool)
+    autoReb = bool
+    if autoReb then
+        task.spawn(function()
+            local stats = game:GetService("Players").LocalPlayer:FindFirstChild("leaderstats")
+            local rem = game:GetService("ReplicatedStorage"):FindFirstChild("rEvents") and game:GetService("ReplicatedStorage").rEvents:FindFirstChild("rebirthRemote")
+            while autoReb and rem and stats do
+                local str = stats:FindFirstChild("Strength") and stats.Strength.Value or 0
+                local reb = stats:FindFirstChild("Rebirths") and stats.Rebirths.Value or 0
+                if str >= (10000 + 2500 * reb) then 
+                    pcall(function() rem:InvokeServer("rebirthRequest") end)
+                    task.wait(1.5) 
+                else 
+                    task.wait(0.2) 
+                end
+            end
+        end)
+    end
+end)
+
+Tab1:AddSwitch("Lock Position (Anchor)", function(bool)
+    lockPositionEnabled = bool
+    pcall(function()
+        local root = game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if root then root.Anchored = lockPositionEnabled end
+    end)
+end)
+
+Tab1:AddButton("Copy Discord Link", function()
+    if setclipboard then setclipboard("https://discord.gg") end
+end)
+
+-- ====================================================================
+-- PESTAÑA 2: TELEPORTS (DIRECTO, SIN FOLDERS)
+-- ====================================================================
+Tab2:AddLabel("--- Island Travel ---")
+
+local dropTp = Tab2:AddDropdown("Select Destination", function(text)
+    selectedDestination = text
+end)
+dropTp:Add("Spawn")
+dropTp:Add("Muscle King Gym")
+dropTp:Add("Industrial Gym")
+dropTp:Add("Frost Island")
+dropTp:Add("Mythical Island")
+dropTp:Add("Eternal Island")
+dropTp:Add("Legend Island")
+
+Tab2:AddButton("Teleport Now", function()
+    pcall(function() 
+        local targetCFrame = TP_Locations[selectedDestination] 
+        local root = game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart") 
+        if targetCFrame and root then root.CFrame = targetCFrame end 
+    end)
+end)
+
+-- ====================================================================
+-- PESTAÑA 3: CRYSTALS & PETS (DIRECTO, SIN FOLDERS)
+-- ====================================================================
+Tab3:AddLabel("--- Game Stability ---")
+
+Tab3:AddButton("Enable Anti-Lag 100%", function()
+    pcall(function() for _, obj in pairs(workspace:GetDescendants()) do if obj:IsA("BasePart") or obj:IsA("MeshPart") then obj.Material, obj.Reflectance = Enum.Material.SmoothPlastic, 0 elseif obj:IsA("Decal") or obj:IsA("Texture") then obj:Destroy() elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") then obj.Enabled = false end end game:GetService("Lighting").GlobalShadows = false end)
+end)
+
+Tab3:AddButton("Enable Anti-Crash", function()
+    pcall(function() settings().Rendering.QualityLevel = Enum.QualityLevel.Level01 game:GetService("Debris"):SetMaxItems(5) end)
+end)
+
+Tab3:AddLabel("--- Auto Buy Crystals ---")
+
+local dropPet = Tab3:AddDropdown("Select Crystal", function(text)
+    selectedUniqueItem = text
+end)
+dropPet:Add("Apex Overlord")
+dropPet:Add("Core Pup")
+dropPet:Add("Volt Talon")
+dropPet:Add("Reactor Beast")
+dropPet:Add("Plasma Ravager")
+dropPet:Add("Titan Reactor")
+dropPet:Add("Neon Guardian")
+dropPet:Add("Cybernetic Showdown Dragon")
+dropPet:Add("Darkstar Hunter")
+dropPet:Add("Muscle Sensei")
+dropPet:Add("Infernal Dragon")
+dropPet:Add("Aether Spirit Bunny")
+dropPet:Add("Magic Butterfly")
+dropPet:Add("Ultra Birdie")
+dropPet:Add("Muscle King")
+dropPet:Add("Entropic Blast")
+
+Tab3:AddSwitch("Auto Buy Pet/Aura", function(bool)
+    autoBuyPet = bool
+    if autoBuyPet then
+        task.spawn(function()
+            local rStorage = game:GetService("ReplicatedStorage")
+            local sharedFolder = rStorage:FindFirstChild("shared")
+            local runtimeFolder = sharedFolder and sharedFolder:FindFirstChild("runtime")
+            local petShopFolder = runtimeFolder and runtimeFolder:FindFirstChild("cPetShopFolder") or rStorage:FindFirstChild("cPetShopFolder")
+            local petShopRemote = rStorage:FindFirstChild("rEvents") and rStorage.rEvents:FindFirstChild("cPetShopRemote") or rStorage:FindFirstChild("cPetShopRemote")
+            while autoBuyPet and petShopFolder and petShopRemote do
+                pcall(function() local petInstance = petShopFolder:FindFirstChild(selectedUniqueItem) if petInstance then petShopRemote:InvokeServer(petInstance) end end)
+                task.wait(0.18)
+            end
+        end)
+    end
+end)
+
+Tab3:AddSwitch("Auto Evolve Pets", function(bool)
+    autoEvolve = bool
+    if autoEvolve then
+        task.spawn(function()
+            local Event = game:GetService("ReplicatedStorage").rEvents.petEvolveEvent
+            local player = game:GetService("Players").LocalPlayer
+            while autoEvolve and Event do
+                pcall(function()
+                    local petsFolder = player:FindFirstChild("petsFolder") or (player.Character and player.Character:FindFirstChild("petsFolder"))
+                    if petsFolder then
+                        local petCounts = {}
+                        for _, element in ipairs(petsFolder:GetDescendants()) do
+                            if element:IsA("StringValue") and not element:FindFirstAncestor("perksFolder") and not element:FindFirstAncestor("Perks") then
+                                local petName = element.Name
+                                petCounts[petName] = (petCounts[petName] or 0) + 1
+                            end
+                        end
+                        for petName, count in pairs(petCounts) do
+                            if count >= 5 then
+                                Event:FireServer("evolvePet", petName)
+                                task.wait(0.5)
+                            end
+                        end
+                    end
+                end)
+                task.wait(1.5)
+            end
+        end)
+    end
+end)
+
+Tab3:AddLabel("--- Extras & Visuals ---")
+
+Tab3:AddSwitch("Player ESP (Wallhack)", function(bool)
+    espEnabled = bool
+    task.spawn(function()
+        while espEnabled do
+            for _, p in pairs(game:GetService("Players"):GetPlayers()) do
+                if p ~= game:GetService("Players").LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    if not p.Character.HumanoidRootPart:FindFirstChild("PremiumESP") then
+                        local box = Instance.new("BoxHandleAdornment")
+                        box.Name, box.Size, box.Color3, box.AlwaysOnTop, box.ZIndex, box.Adornee, box.Parent = "PremiumESP", Vector3.new(4, 6, 4), Color3.fromRGB(0, 255, 255), true, 5, p.Character.HumanoidRootPart, p.Character.HumanoidRootPart
+                    end
+                end
+            end
+            task.wait(2)
+        end
+        if not espEnabled then for _, p in pairs(game:GetService("Players"):GetPlayers()) do if p.Character and p.Character:FindFirstChild("HumanoidRootPart") and p.Character.HumanoidRootPart:FindFirstChild("PremiumESP") then p.Character.HumanoidRootPart.PremiumESP:Destroy() end end end
+    end)
+end)
+
+-- ANTI-IDLE CONTRA DESCONEXIONES
+pcall(function() 
+    game:GetService("Players").LocalPlayer.Idled:Connect(function() 
+        game:GetService("VirtualUser"):CaptureController() 
+        game:GetService("VirtualUser"):ClickButton2(Vector2.new(0,0)) 
+    end) 
+end)
