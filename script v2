@@ -129,7 +129,7 @@ end
 -- CREAR VENTANA PRINCIPAL
 local window = library:AddWindow("AFX|ALPHA FOR X SCRIPT", {
     main_color = Color3.fromRGB(0, 150, 255),
-    min_size = Vector2.new(280, 360),
+    min_size = Vector2.new(500, 360),
     can_resize = false,
 })
 
