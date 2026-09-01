@@ -76,7 +76,13 @@ while not Validated do task.wait(0.1) end
 -- ====================================================================
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/memejames/elerium-v2-ui-library//main/Library", true))()
 
--- Variables globales
+-- Variables globales indispensables
+local lp = { player = game:GetService("Players").LocalPlayer }
+local services = {
+    replicatedstorage = game:GetService("ReplicatedStorage"),
+    muscleEvent = game:GetService("Players").LocalPlayer:WaitForChild("muscleEvent", 5) or game:GetService("ReplicatedStorage"):WaitForChild("muscleEvent")
+}
+
 local selectedRockName = "Tiny Rock"
 local selectedUniqueItem = "Apex Overlord"
 local selectedDestination = "Spawn"
@@ -84,7 +90,6 @@ local selectedDestination = "Spawn"
 local autoRep = false
 local fastRep = false
 local autoLift = false
-local autoReb = false
 local autoRockGlitch = false
 local autoBuyPet = false
 local autoEvolve = false
@@ -119,11 +124,15 @@ local function findPhysicalRock(requiredDurability)
     return nil
 end
 
-local function autoEquipPunch()
+local function autoEquipToolByName(toolName)
     local player = game:GetService("Players").LocalPlayer
     local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-    local punch = player.Character:FindFirstChild("Punch") or player.Backpack:FindFirstChild("Punch")
-    if punch and humanoid and punch.Parent ~= player.Character then humanoid:EquipTool(punch) end
+    if not humanoid then return end
+    
+    local tool = player.Character:FindFirstChild(toolName) or player.Backpack:FindFirstChild(toolName)
+    if tool and tool.Parent ~= player.Character then 
+        humanoid:EquipTool(tool) 
+    end
 end
 
 -- CREAR VENTANA PRINCIPAL
@@ -149,8 +158,12 @@ Tab1:AddSwitch("Auto Rep (Normal)", function(bool)
     autoRep = bool
     if autoRep then
         task.spawn(function()
-            local ev = game:GetService("Players").LocalPlayer:FindFirstChild("muscleEvent")
-            while autoRep and ev do ev:FireServer("rep") task.wait(0.3) end
+            local ev = services.muscleEvent
+            while autoRep and ev do 
+                autoEquipToolByName("Weight")
+                ev:FireServer("rep") 
+                task.wait(0.3) 
+            end
         end)
     end
 end)
@@ -159,9 +172,9 @@ Tab1:AddSwitch("Auto Fast Rep (AFX x15)", function(bool)
     fastRep = bool
     if fastRep then
         task.spawn(function()
-            local pl = game:GetService("Players").LocalPlayer
-            local ev = pl:FindFirstChild("muscleEvent")
+            local ev = services.muscleEvent
             while fastRep and ev do
+                autoEquipToolByName("Weight")
                 for i = 1, 15 do task.spawn(function() ev:FireServer("rep") end) end
                 task.wait(0.001)
             end
@@ -195,9 +208,9 @@ Tab1:AddSwitch("Auto Fast Rock Hit", function(bool)
     if autoRockGlitch then
         task.spawn(function()
             local player = game:GetService("Players").LocalPlayer
-            local ev = player:FindFirstChild("muscleEvent")
+            local ev = services.muscleEvent
             while autoRockGlitch and ev do
-                autoEquipPunch()
+                autoEquipToolByName("Punch")
                 local targetDurability = RocksConfig[selectedRockName] or 0
                 local physicalRock = findPhysicalRock(targetDurability)
                 local char = player.Character
@@ -374,6 +387,166 @@ Tab3:AddSwitch("Player ESP (Wallhack)", function(bool)
         if not espEnabled then for _, p in pairs(game:GetService("Players"):GetPlayers()) do if p.Character and p.Character:FindFirstChild("HumanoidRootPart") and p.Character.HumanoidRootPart:FindFirstChild("PremiumESP") then p.Character.HumanoidRootPart.PremiumESP:Destroy() end end end
     end)
 end)
+
+-- ====================================================================
+-- PESTAÑA 4: AUTO REBIRTH
+-- ====================================================================
+local Tab4 = window:AddTab("Fast Reb")
+
+-- Inicialización de datos esenciales
+local leaderstats = lp.player:WaitForChild("leaderstats")
+local rebirths = leaderstats:WaitForChild("Rebirths")
+local strength = leaderstats:WaitForChild("Strength")
+
+local rbData = {
+    running = false,
+    workerActive = false,
+    maxSlots = 9
+}
+
+local function unequipAllPets()
+    local petsFolder = lp.player:FindFirstChild("petsFolder")
+    if not petsFolder then return end
+    for _, folder in ipairs(petsFolder:GetChildren()) do
+        if folder:IsA("Folder") then
+            for _, pet in ipairs(folder:GetChildren()) do
+                pcall(function()
+                    services.replicatedstorage.rEvents.equipPetEvent:FireServer("unequipPet", pet)
+                end)
+            end
+        end
+    end
+    task.wait(0.1)
+end
+
+local function equipFarmingPets()
+    unequipAllPets()
+    local petsFolder = lp.player:FindFirstChild("petsFolder")
+    local uniqueFolder = petsFolder and petsFolder:FindFirstChild("Unique")
+    if not uniqueFolder then return end
+
+    local omegas, swifts, hounds = {}, {}, {}
+    for _, pet in ipairs(uniqueFolder:GetChildren()) do
+        if pet.Name == "Omega Overlord" then table.insert(omegas, pet)
+        elseif pet.Name == "Swift Samurai" then table.insert(swifts, pet)
+        elseif pet.Name == "Powercore Hound" then table.insert(hounds, pet) end
+    end
+
+    local equippedCount = 0
+    local currentPercent = 0
+
+    for i = #omegas, 1, -1 do
+        if equippedCount < rbData.maxSlots and currentPercent < 100 then
+            pcall(function() services.replicatedstorage.rEvents.equipPetEvent:FireServer("equipPet", omegas[i]) end)
+            currentPercent = currentPercent + 20
+            equippedCount = equippedCount + 1
+        end
+    end
+    for i = #swifts, 1, -1 do
+        if equippedCount < rbData.maxSlots and currentPercent < 100 then
+            pcall(function() services.replicatedstorage.rEvents.equipPetEvent:FireServer("equipPet", swifts[i]) end)
+            currentPercent = currentPercent + 15
+            equippedCount = equippedCount + 1
+        end
+    end
+    if currentPercent >= 100 then
+        for i = #hounds, 1, -1 do
+            if equippedCount < rbData.maxSlots then
+                pcall(function() services.replicatedstorage.rEvents.equipPetEvent:FireServer("equipPet", hounds[i]) end)
+                equippedCount = equippedCount + 1
+            end
+        end
+    end
+    for i = #omegas, 1, -1 do
+        if equippedCount < rbData.maxSlots then
+            pcall(function() services.replicatedstorage.rEvents.equipPetEvent:FireServer("equipPet", omegas[i]) end)
+            equippedCount = equippedCount + 1
+        end
+    end
+    for i = #swifts, 1, -1 do
+        if equippedCount < rbData.maxSlots then
+            pcall(function() services.replicatedstorage.rEvents.equipPetEvent:FireServer("equipPet", swifts[i]) end)
+            equippedCount = equippedCount + 1
+        end
+    end
+end
+
+local function equipRebirthPets()
+    unequipAllPets()
+    local petsFolder = lp.player:FindFirstChild("petsFolder")
+    local uniqueFolder = petsFolder and petsFolder:FindFirstChild("Unique")
+    if not uniqueFolder then return end
+
+    local hydras, tribals = {}, {}
+    for _, pet in ipairs(uniqueFolder:GetChildren()) do
+        if pet.Name == "Titanium Hydra" then table.insert(hydras, pet)
+        elseif pet.Name == "Tribal Overlord" then table.insert(tribals, pet) end
+    end
+
+    local equippedCount = 0
+    for i = 1, #hydras do
+        if equippedCount < rbData.maxSlots then
+            pcall(function() services.replicatedstorage.rEvents.equipPetEvent:FireServer("equipPet", hydras[i]) end)
+            equippedCount = equippedCount + 1
+        end
+    end
+    for i = 1, #tribals do
+        if equippedCount < rbData.maxSlots then
+            pcall(function() services.replicatedstorage.rEvents.equipPetEvent:FireServer("equipPet", tribals[i]) end)
+            equippedCount = equippedCount + 1
+        end
+    end
+end
+
+local function performRebirthCycle()
+    local strengthTarget = 5000 + rebirths.Value * 2550
+    local repsPerBurst = lp.player.MembershipType == Enum.MembershipType.Premium and 6 or 12
+    local mEvent = services.muscleEvent
+
+    while rbData.running and strength.Value < strengthTarget do
+        autoEquipToolByName("Weight")
+        for i = 1, repsPerBurst do
+            pcall(function() mEvent:FireServer("rep") end)
+        end
+        task.wait(0.01)
+    end
+
+    if rbData.running and strength.Value >= strengthTarget then
+        equipRebirthPets()
+        task.wait(0.2)
+        local currentRb = rebirths.Value
+        local rRemote = services.replicatedstorage:FindFirstChild("rEvents") and services.replicatedstorage.rEvents:FindFirstChild("rebirthRemote")
+        if rRemote then
+            local timeout = 0
+            repeat
+                pcall(function() rRemote:InvokeServer("rebirthRequest") end)
+                task.wait(0.05)
+                timeout = timeout + 0.05
+            until rebirths.Value > currentRb or not rbData.running or timeout > 2
+        end
+    end
+end
+
+local function startWorker()
+    if rbData.workerActive then return end
+    rbData.workerActive = true
+    task.spawn(function()
+        while rbData.running do
+            equipFarmingPets()
+            performRebirthCycle()
+            task.wait(0.2)
+        end
+        rbData.workerActive = false
+    end)
+end
+
+Tab4:AddLabel(" AUTO FAST REB")
+Tab4:AddSwitch("Fast Rebirth (include auto equip weight)", function(state)
+    rbData.running = state
+    if state then
+        startWorker()
+    end
+end):Set(false)
 
 -- ANTI-IDLE CONTRA DESCONEXIONES
 pcall(function() 
