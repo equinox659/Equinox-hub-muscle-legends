@@ -136,9 +136,9 @@ local function autoEquipToolByName(toolName)
 end
 
 -- CREAR VENTANA PRINCIPAL
-local window = library:AddWindow("AFX|ALPHA FOR X SCRIPT", {
+local window = library:AddWindow("AFX | ALPHA FOR X SCRIPT | FAST FARMING v2", {
     main_color = Color3.fromRGB(0, 150, 255),
-    min_size = Vector2.new(500, 360),
+    min_size = Vector2.new(500, 400),
     can_resize = false,
 })
 
@@ -213,7 +213,7 @@ Tab1:AddSwitch("Auto Fast Rock Hit", function(bool)
     end
 end)
 
-Tab1:AddLabel("")
+Tab1:AddLabel("rebirth")
 
 Tab1:AddSwitch("Auto Rebirth", function(bool)
     autoReb = bool
@@ -224,7 +224,7 @@ Tab1:AddSwitch("Auto Rebirth", function(bool)
             local rEvents = game:GetService("ReplicatedStorage"):WaitForChild("rEvents", 5)
             local rem = rEvents and rEvents:WaitForChild("rebirthRemote", 5)
             
-            -- Salir si no se encuentran los elementos necesarios
+           
             if not stats or not rem then return end
 
             while autoReb do
@@ -234,14 +234,14 @@ Tab1:AddSwitch("Auto Rebirth", function(bool)
                 local str = strengthObj and strengthObj.Value or 0
                 local reb = rebirthsObj and rebirthsObj.Value or 0
                 
-                -- Fórmula del requisito de fuerza
+                
                 if str >= (10000 + 2500 * reb) then 
                     pcall(function() 
                         rem:InvokeServer("rebirthRequest") 
                     end)
-                    task.wait(1.5) -- Espera prudente tras el Rebirth
+                    task.wait(1.5) 
                 else
-                    task.wait(0.5) -- Espera corta si aún no tienes la fuerza necesaria
+                    task.wait(0.5) 
                 end
             end
         end)
@@ -303,7 +303,7 @@ local dropPet = Tab3:AddDropdown("Select Crystal", function(text)
     selectedUniqueItem = text
 end)
 dropPet:Add("Apex Overlord")
-dropPet:Add("Eclipse Sovereign")
+dropPet:Add("Core Pup")
 dropPet:Add("Volt Talon")
 dropPet:Add("Reactor Beast")
 dropPet:Add("Plasma Ravager")
