@@ -154,7 +154,7 @@ local Tab3 = window:AddTab("Crystals & Pets")
 -- ====================================================================
 Tab1:AddLabel("--- Strength Farming ---")
 
-Tab1:AddSwitch("Auto Rep (Normal)", function(bool)
+Tab1:AddSwitch("Auto Rep", function(bool)
     autoRep = bool
     if autoRep then
         task.spawn(function()
@@ -162,21 +162,7 @@ Tab1:AddSwitch("Auto Rep (Normal)", function(bool)
             while autoRep and ev do 
                 autoEquipToolByName("Weight")
                 ev:FireServer("rep") 
-                task.wait(0.3) 
-            end
-        end)
-    end
-end)
-
-Tab1:AddSwitch("Auto Fast Rep (AFX x15)", function(bool)
-    fastRep = bool
-    if fastRep then
-        task.spawn(function()
-            local ev = services.muscleEvent
-            while fastRep and ev do
-                autoEquipToolByName("Weight")
-                for i = 1, 15 do task.spawn(function() ev:FireServer("rep") end) end
-                task.wait(0.001)
+                task.wait(0.1) 
             end
         end)
     end
@@ -391,7 +377,7 @@ end)
 -- ====================================================================
 -- PESTAÑA 4: AUTO REBIRTH
 -- ====================================================================
-local Tab4 = window:AddTab("Fast Reb")
+local Tab4 = window:AddTab("Fast Rebirth")
 
 -- Inicialización de datos esenciales
 local leaderstats = lp.player:WaitForChild("leaderstats")
@@ -540,13 +526,28 @@ local function startWorker()
     end)
 end
 
-Tab4:AddLabel(" AUTO FAST REB")
+Tab4:AddLabel(" AUTO FAST REBIRTH")
 Tab4:AddSwitch("Fast Rebirth (include auto equip weight)", function(state)
     rbData.running = state
     if state then
         startWorker()
     end
 end):Set(false)
+
+
+Tab4:AddSwitch("Auto Fast Rep", function(bool)
+    fastRep = bool
+    if fastRep then
+        task.spawn(function()
+            local ev = services.muscleEvent
+            while fastRep and ev do
+                autoEquipToolByName("Weight")
+                for i = 1, 15 do task.spawn(function() ev:FireServer("rep") end) end
+                task.wait(0.07)
+            end
+        end)
+    end
+end)
 
 -- ANTI-IDLE CONTRA DESCONEXIONES
 pcall(function() 
