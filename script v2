@@ -284,6 +284,101 @@ Tab2:AddButton("Teleport Now", function()
     end)
 end)
 
+
+
+Tab2:AddLabel("--- Player Teleport & Spectate ---")
+
+local selectedPlayerName = nil
+local spectatingLoop = nil
+
+-- Crear el Dropdown para seleccionar el jugador
+local dropPlayerTp = Tab2:AddDropdown("Select Player", function(text)
+    selectedPlayerName = text
+end)
+
+-- BUCLE PARA ACTUALIZAR LOS JUGADORES EN EL DROPDOWN AUTOMÁTICAMENTE
+task.spawn(function()
+    while true do
+        pcall(function()
+            if dropPlayerTp.Clear or dropPlayerTp.ClearOptions then
+                local clearFunc = dropPlayerTp.Clear or dropPlayerTp.ClearOptions
+                clearFunc(dropPlayerTp)
+            end
+            
+            local allPlayers = game:GetService("Players"):GetPlayers()
+            for _, p in ipairs(allPlayers) do
+                if p ~= game:GetService("Players").LocalPlayer then
+                    dropPlayerTp:Add(p.Name)
+                end
+            end
+        end)
+        task.wait(5)
+    end
+end)
+
+-- BOTÓN PARA EJECUTAR EL TELETRANSPORTE AL JUGADOR
+Tab2:AddButton("Teleport to Player", function()
+    pcall(function()
+        if not selectedPlayerName then return end
+        
+        local targetPlayer = game:GetService("Players"):FindFirstChild(selectedPlayerName)
+        local targetChar = targetPlayer and targetPlayer.Character
+        local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
+        
+        local myRoot = game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        
+        if targetRoot and myRoot then
+            myRoot.CFrame = targetRoot.CFrame * CFrame.new(0, 0, 3)
+            print("[AFX] Teletransportado con éxito hacia: " .. selectedPlayerName)
+        else
+            print("[AFX] No se pudo encontrar el personaje del jugador seleccionado.")
+        end
+    end)
+end)
+
+-- ========================================================
+-- NUEVO SWITCH: ESPECTAR JUGADOR SELECCIONADO
+-- ========================================================
+Tab2:AddSwitch("Spectate Player", function(bool)
+    local camera = workspace.CurrentCamera
+    local localPlayer = game:GetService("Players").LocalPlayer
+
+    if bool then
+        -- Si está encendido, iniciamos un bucle para mantener la cámara en el objetivo
+        _G.IsSpectating = true
+        task.spawn(function()
+            while _G.IsSpectating do
+                pcall(function()
+                    if selectedPlayerName then
+                        local targetPlayer = game:GetService("Players"):FindFirstChild(selectedPlayerName)
+                        local targetChar = targetPlayer and targetPlayer.Character
+                        local targetHumanoid = targetChar and targetChar:FindFirstChildOfClass("Humanoid")
+                        
+                        -- Si el jugador objetivo existe y tiene un humanoide vivo, fijamos la cámara
+                        if targetHumanoid and camera.CameraSubject ~= targetHumanoid then
+                            camera.CameraSubject = targetHumanoid
+                        end
+                    end
+                end)
+                task.wait(0.1) -- Validación rápida continua por si el objetivo muere o respawnea
+            end
+        end)
+        print("spectating" .. tostring(selectedPlayerName))
+    else
+        -- Al apagar el switch, rompemos el bucle y devolvemos la cámara al LocalPlayer
+        _G.IsSpectating = false
+        pcall(function()
+            local myChar = localPlayer.Character
+            local myHumanoid = myChar and myChar:FindFirstChildOfClass("Humanoid")
+            if myHumanoid then
+                camera.CameraSubject = myHumanoid
+                print("spectate")
+            end
+        end)
+    end
+end)
+
+
 -- ====================================================================
 -- TAB 3: CRYSTALS & PETS
 -- ====================================================================
