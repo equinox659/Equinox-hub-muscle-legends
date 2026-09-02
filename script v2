@@ -565,6 +565,13 @@ end)
 
 
 
+
+
+
+
+
+
+Tab4:AddLabel("------AUTO USE------")
 -- VARIABLES DE CONTROL GLOBALES
 _G.EggEaterData = _G.EggEaterData or {
     AmountToEat = 10
@@ -683,10 +690,52 @@ Tab4:AddButton("Eat Selected Amount", function()
 end)
 
 -- 3. Switch para comer barras y batidos automáticos (Se reinicia al apagarlo para limpiar)
-Tab4:AddSwitch("Auto Eat Boosts", function(bool)
+Tab4:AddSwitch("Auto Eat all Boosts", function(bool)
     _G.BoostData.Running = bool
     if bool == false then
         resetCharacterCleanly()
+    end
+end)
+
+
+-- VARIABLE DE CONTROL PARA EL TELEPORT
+_G.AutoTeleport = _G.AutoTeleport or false
+
+-- COORDENADAS OBJETIVO (CFrame exacto)
+local targetCFrame = CFrame.new(-8772.97266, 24.4272194, -5638.37402, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+
+local player = game:GetService("Players").LocalPlayer
+
+-- BUCLE DE TELETRANSPORTACIÓN CONTINUA
+task.spawn(function()
+    while true do
+        if _G.AutoTeleport then
+            local char = player.Character
+            local root = char and char:FindFirstChild("HumanoidRootPart")
+            local humanoid = char and char:FindFirstChildOfClass("Humanoid")
+            
+            -- Verificar que el personaje esté vivo y tenga su parte principal
+            if root and humanoid and humanoid.Health > 0 then
+                -- Teletransporta manteniendo las físicas estables
+                root.CFrame = targetCFrame
+            end
+            task.wait(0.1) -- Ritmo constante para evitar saltos bruscos o desparches del mapa
+        else
+            task.wait(0.5) -- Pausa optimizada cuando el switch está apagado
+        end
+    end
+end)
+
+-- ========================================================
+-- AGREGAR EL SWITCH A LA INTERFAZ
+-- ========================================================
+-- Recuerda cambiar "Tab4" por la variable de la pestaña donde quieras colocarlo (ej: Tab2)
+Tab4:AddSwitch("Auto Teleport to Muscle king", function(bool)
+    _G.AutoTeleport = bool
+    if bool then
+        print("Teleport")
+    else
+        print("Teleport")
     end
 end)
 
