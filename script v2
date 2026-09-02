@@ -562,6 +562,138 @@ Tab4:AddSwitch("Auto Fast Rep", function(bool)
     end
 end)
 
+
+
+
+-- VARIABLES DE CONTROL GLOBALES
+_G.EggEaterData = _G.EggEaterData or {
+    AmountToEat = 10
+}
+
+_G.BoostData = _G.BoostData or {
+    ItemList = {"Tropical Shake", "Energy Shake", "Protein Bar", "TOUGH Bar", "Protein Shake", "ULTRA Shake", "Energy Bar"},
+    Running = false
+}
+
+local player = game:GetService("Players").LocalPlayer
+local muscleEvent = player:WaitForChild("muscleEvent", 10)
+
+-- FUNCIÓN PARA REINICIAR AL JUGADOR Y ELIMINAR EL EFECTO OSCURO/BLUR
+local function resetCharacterCleanly()
+    local char = player.Character
+    local humanoid = char and char:FindFirstChildOfClass("Humanoid")
+    if humanoid and humanoid.Health > 0 then
+        print("[AFX] Reiniciando personaje para limpiar efectos visuales residuales.")
+        humanoid.Health = 0 -- Provoca la muerte instantánea para resetear la UI del juego de forma limpia
+    end
+end
+
+-- FUNCIÓN DE CONSUMO DIRECTO AL SERVIDOR
+local function executeServerConsume(itemName)
+    local char = player.Character
+    local backpack = player:FindFirstChild("Backpack")
+    if not char or not backpack or not muscleEvent then return false end
+
+    local tool = char:FindFirstChild(itemName) or backpack:FindFirstChild(itemName)
+    
+    if tool then
+        -- Forzar equipado rápido en el personaje
+        if tool.Parent == backpack then
+            tool.Parent = char
+            task.wait(0.02)
+        end
+        
+        -- Formatear argumento exacto para el servidor
+        local argument = itemName
+        if itemName == "Protein Egg" then
+            argument = "proteinEgg"
+        else
+            local firstWord = itemName:match("^(%S+)")
+            local restOfName = itemName:sub(#firstWord + 1):gsub("%s+", "")
+            argument = firstWord:lower() .. restOfName
+        end
+        
+        -- Enviar petición directa de consumo (Mapeado del descompilado)
+        muscleEvent:FireServer(argument, tool)
+        return true
+    end
+    return false
+end
+
+-- FUNCIÓN PARA EL BOTÓN DE CANTIDAD EXACTA (CON AUTO-REINICIO AL TERMINAR)
+local function eatExactQuantity(amount)
+    print("[AFX] Consumiendo " .. amount .. " huevos...")
+    local count = 0
+    for i = 1, amount do
+        local success = executeServerConsume("Protein Egg")
+        if success then
+            count = count + 1
+            task.wait(0.12) -- Ritmo ideal y rápido de farmeo
+        else
+            print("[AFX] Sin huevos suficientes en inventario.")
+            break
+        end
+    end
+    task.wait(0.3)
+    -- REINICIO AUTOMÁTICO AL TERMINAR LA CANTIDAD SELECCIONADA PARA QUITAR EL BLUR
+    resetCharacterCleanly() 
+end
+
+-- BUCLE CONTINUO EXCLUSIVO PARA LOS BOOSTS (BATIDOS Y BARRAS)
+task.spawn(function()
+    while true do
+        if _G.BoostData.Running then
+            for _, itemName in ipairs(_G.BoostData.ItemList) do
+                if not _G.BoostData.Running then break end
+                local success = executeServerConsume(itemName)
+                if success then
+                    task.wait(0.08)
+                end
+            end
+            task.wait(0.15)
+        else
+            task.wait(0.5)
+        end
+    end
+end)
+
+-- ========================================================
+-- REGISTRO DE COMPONENTES EN TU MENÚ (Tab4)
+-- ========================================================
+
+-- 1. Caja de texto para setear el número de huevos a comer
+Tab4:AddTextBox("Eggs number", function(text)
+    local number = tonumber(text)
+    if number and number > 0 then
+        _G.EggEaterData.AmountToEat = number
+    else
+        local altNumber = tonumber(tostring(text))
+        if altNumber and altNumber > 0 then
+            _G.EggEaterData.AmountToEat = altNumber
+        end
+    end
+end)
+
+-- 2. BOTÓN: Come la cantidad exacta configurada y se reinicia solo de inmediato
+Tab4:AddButton("Eat Selected Amount", function()
+    local targetAmount = _G.EggEaterData.AmountToEat or 10
+    task.spawn(function()
+        eatExactQuantity(targetAmount)
+    end)
+end)
+
+-- 3. Switch para comer barras y batidos automáticos (Se reinicia al apagarlo para limpiar)
+Tab4:AddSwitch("Auto Eat Boosts", function(bool)
+    _G.BoostData.Running = bool
+    if bool == false then
+        resetCharacterCleanly()
+    end
+end)
+
+
+
+
+
 -- ANTI-IDLE CONTRA DESCONEXIONES
 pcall(function() 
     game:GetService("Players").LocalPlayer.Idled:Connect(function() 
