@@ -1,5 +1,5 @@
 -- ====================================================================
--- SISTEMA DE VERIFICACIÓN CUSTOM (BYPASS)
+-- SISTEMA DE VERIFICACIÓN CUSTOM
 -- ====================================================================
 local Player = game:GetService("Players").LocalPlayer
 local CoreGui = game:GetService("CoreGui")
@@ -72,7 +72,7 @@ end)
 while not Validated do task.wait(0.1) end
 
 -- ====================================================================
--- CARGA DE LA LIBRERÍA ELERIUM V2 (MEMEJAMES URL)
+-- CARGA DE LA LIBRERÍA ELERIUM V2 XD
 -- ====================================================================
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/memejames/elerium-v2-ui-library//main/Library", true))()
 
@@ -213,7 +213,7 @@ Tab1:AddSwitch("Auto Fast Rock Hit", function(bool)
     end
 end)
 
-Tab1:AddLabel("--- Rebirth & Position ---")
+Tab1:AddLabel("")
 
 Tab1:AddSwitch("Auto Rebirth", function(bool)
     autoReb = bool
@@ -228,7 +228,9 @@ Tab1:AddSwitch("Auto Rebirth", function(bool)
                     pcall(function() rem:InvokeServer("rebirthRequest") end)
                     task.wait(1.5) 
                 else 
-                    task.wait(0.2) 
+                    task.wait(0.2)
+                while true do
+                    task.wait(0.1)
                 end
             end
         end)
@@ -248,7 +250,7 @@ Tab1:AddButton("Copy Discord Link", function()
 end)
 
 -- ====================================================================
--- PESTAÑA 2: TELEPORTS (DIRECTO, SIN FOLDERS)
+-- TAB 2: TELEPORTS
 -- ====================================================================
 Tab2:AddLabel("--- Island Travel ---")
 
@@ -272,7 +274,7 @@ Tab2:AddButton("Teleport Now", function()
 end)
 
 -- ====================================================================
--- PESTAÑA 3: CRYSTALS & PETS (DIRECTO, SIN FOLDERS)
+-- TAB 3: CRYSTALS & PETS
 -- ====================================================================
 Tab3:AddLabel("--- Game Stability ---")
 
@@ -375,7 +377,7 @@ Tab3:AddSwitch("Player ESP (Wallhack)", function(bool)
 end)
 
 -- ====================================================================
--- PESTAÑA 4: AUTO REBIRTH
+-- TAB 4: AUTO REBIRTH
 -- ====================================================================
 local Tab4 = window:AddTab("Fast Rebirth")
 
