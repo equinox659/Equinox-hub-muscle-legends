@@ -219,18 +219,29 @@ Tab1:AddSwitch("Auto Rebirth", function(bool)
     autoReb = bool
     if autoReb then
         task.spawn(function()
-            local stats = game:GetService("Players").LocalPlayer:FindFirstChild("leaderstats")
-            local rem = game:GetService("ReplicatedStorage"):FindFirstChild("rEvents") and game:GetService("ReplicatedStorage").rEvents:FindFirstChild("rebirthRemote")
-            while autoReb and rem and stats do
-                local str = stats:FindFirstChild("Strength") and stats.Strength.Value or 0
-                local reb = stats:FindFirstChild("Rebirths") and stats.Rebirths.Value or 0
+            local player = game:GetService("Players").LocalPlayer
+            local stats = player:WaitForChild("leaderstats", 5)
+            local rEvents = game:GetService("ReplicatedStorage"):WaitForChild("rEvents", 5)
+            local rem = rEvents and rEvents:WaitForChild("rebirthRemote", 5)
+            
+            -- Salir si no se encuentran los elementos necesarios
+            if not stats or not rem then return end
+
+            while autoReb do
+                local strengthObj = stats:FindFirstChild("Strength")
+                local rebirthsObj = stats:FindFirstChild("Rebirths")
+                
+                local str = strengthObj and strengthObj.Value or 0
+                local reb = rebirthsObj and rebirthsObj.Value or 0
+                
+                -- Fórmula del requisito de fuerza
                 if str >= (10000 + 2500 * reb) then 
-                    pcall(function() rem:InvokeServer("rebirthRequest") end)
-                    task.wait(1.5) 
-                else 
-                    task.wait(0.2)
-                while true do
-                    task.wait(0.1)
+                    pcall(function() 
+                        rem:InvokeServer("rebirthRequest") 
+                    end)
+                    task.wait(1.5) -- Espera prudente tras el Rebirth
+                else
+                    task.wait(0.5) -- Espera corta si aún no tienes la fuerza necesaria
                 end
             end
         end)
@@ -292,7 +303,7 @@ local dropPet = Tab3:AddDropdown("Select Crystal", function(text)
     selectedUniqueItem = text
 end)
 dropPet:Add("Apex Overlord")
-dropPet:Add("Core Pup")
+dropPet:Add("Eclipse Sovereign")
 dropPet:Add("Volt Talon")
 dropPet:Add("Reactor Beast")
 dropPet:Add("Plasma Ravager")
