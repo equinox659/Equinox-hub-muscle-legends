@@ -835,6 +835,59 @@ Tab4:AddSwitch("Auto Teleport to Muscle king", function(bool)
 end)
 
 
+-- ========================================================
+-- VARIABLES DE CONTROL PARA LA RULETA
+-- ========================================================
+_G.AutoSpinWheel = false
+
+local replicatedStorage = game:GetService("ReplicatedStorage")
+local rEvents = replicatedStorage:WaitForChild("rEvents", 5)
+local openFortuneWheelRemote = rEvents and rEvents:WaitForChild("openFortuneWheelRemote", 5)
+
+-- Ruta del catálogo obtenida de la línea 59 del descompilado
+local fortuneCatalog = replicatedStorage:WaitForChild("shared", 5) 
+    and replicatedStorage.shared:WaitForChild("catalogs", 5) 
+    and replicatedStorage.shared.catalogs:WaitForChild("fortuneWheelChances", 5) 
+    and replicatedStorage.shared.catalogs.fortuneWheelChances:WaitForChild("Fortune Wheel", 5)
+
+-- BUCLE DE EJECUCIÓN (Gira de forma instantánea saltándose la animación)
+task.spawn(function()
+    while true do
+        if _G.AutoSpinWheel then
+            if openFortuneWheelRemote and fortuneCatalog then
+                local success, result = pcall(function()
+                    -- Invoca directamente al servidor con el catálogo correspondiente
+                    return openFortuneWheelRemote:InvokeServer("openFortuneWheel", fortuneCatalog)
+                end)
+                
+                if success and typeof(result) == "table" then
+                    -- Te avisa en la consola F9 qué ganaste en ese milisegundo
+                    print("[AFX] Ruleta girada. Ganaste: " .. tostring(result.name) .. " [" .. tostring(result.rarity) .. "]")
+                    task.wait(0.3) -- Pausa corta y fluida entre giros exitosos
+                else
+                    -- Si te quedas sin giros o el servidor rechaza la petición, espera un momento
+                    task.wait(1)
+                end
+            else
+                task.wait(1)
+            end
+        else
+            task.wait(0.5) -- Pausa optimizada si el switch está apagado
+        end
+    end
+end)
+
+-- ========================================================
+-- AGREGAR EL SWITCH A TU INTERFAZ (Tab4)
+-- ========================================================
+Tab4:AddSwitch("Auto Spin Wheel", function(bool)
+    _G.AutoSpinWheel = bool
+    if bool then
+        print("[AFX] Auto-Spin activado de forma instantánea.")
+    else
+        print("[AFX] Auto-Spin desactivado.")
+    end
+end)
 
 
 
