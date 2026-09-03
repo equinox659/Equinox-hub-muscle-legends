@@ -43,7 +43,7 @@ LoaderTab:AddButton({
         })
         
 
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/equinox659/Equinox-hub-muscle-legends/refs/heads/main/script%20v2"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/equinox659/Equinox-hub-muscle-legends/refs/heads/main/script%20v2%20lua"))()
     end
 })
 
