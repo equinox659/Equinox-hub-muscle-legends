@@ -115,7 +115,7 @@ window.Position = UDim2.new(0, 20, 0, 20)
 window.Selectable = true
 window.Size = UDim2.new(0, 200, 0, 200)
 window.Image = "rbxassetid://91965351902828"
-window.ImageColor3 = Color3.new(0.0823529, 0.0862745, 0.0901961)
+window.ImageColor3 = Color3.new(1, 1, 1)
 window.ScaleType = Enum.ScaleType.Slice
 window.SliceCenter = Rect.new(12, 12, 12, 12)
 
