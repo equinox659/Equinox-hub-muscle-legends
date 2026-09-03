@@ -143,15 +143,23 @@ local window = library:AddWindow("AFX | ALPHA FOR X SCRIPT | FAST FARMING v2", {
 })
 
 -- PESTAÑAS (TABS) DIRECTAS
+
 local Tab1 = window:AddTab("Farming")
 Tab1:Show()
 
+
 local Tab2 = window:AddTab("Teleports")
-local Tab3 = window:AddTab("Crystals & Pets")
+
+
+local Tab3 = window:AddTab("Pets")
+
 
 -- ====================================================================
 -- PESTAÑA 1: FARMING (DIRECTO, SIN FOLDERS)
 -- ====================================================================
+
+
+
 Tab1:AddLabel("--- Strength Farming ---")
 
 Tab1:AddSwitch("Auto Rep", function(bool)
@@ -887,6 +895,145 @@ Tab4:AddSwitch("Auto Spin Wheel", function(bool)
     else
         print("[AFX] Auto-Spin desactivado.")
     end
+end)
+
+local Tab5 = window:AddTab("Misc")
+
+
+local WaterParts = {
+	Parts = {},
+	PartSize = 2048,
+	TotalDistance = 50000,
+	StartPosition = Vector3.new(-2, -9.5, -2)
+}
+
+task.spawn(function()
+	for x = 0, math.ceil(WaterParts.TotalDistance / WaterParts.PartSize) - 1 do
+		for z = 0, math.ceil(WaterParts.TotalDistance / WaterParts.PartSize) - 1 do
+			for i, offset in ipairs({
+				{x * WaterParts.PartSize, z * WaterParts.PartSize, "Side_" .. x .. "_" .. z},
+				{-x * WaterParts.PartSize, z * WaterParts.PartSize, "LeftRight_" .. x .. "_" .. z},
+				{-x * WaterParts.PartSize, -z * WaterParts.PartSize, "UpLeft_" .. x .. "_" .. z},
+				{x * WaterParts.PartSize, -z * WaterParts.PartSize, "UpRight_" .. x .. "_" .. z}
+			}) do
+				local part = Instance.new("Part")
+				part.Size = Vector3.new(WaterParts.PartSize, 1, WaterParts.PartSize)
+				part.Position = WaterParts.StartPosition + Vector3.new(offset[1], 0, offset[2])
+				part.Anchored = true
+				part.Transparency = 1
+				part.CanCollide = true
+				part.Name = "Part_" .. offset[3]
+				part.Parent = services.Workspace
+				table.insert(WaterParts.Parts, part)
+			end
+		end
+	end
+end)
+
+
+local walkonwaterSwicth = Tab5:AddSwitch("Walk on Water", function(bool)
+	for _, part in ipairs(WaterParts.Parts) do
+		if part and part.Parent then part.CanCollide = bool end
+	end
+end)
+walkonwaterSwicth:Set(true)
+
+
+local timeDropdown = Tab5:AddDropdown("Change Time", function(selection)
+	game:GetService("Lighting").ClockTime = selection == "Night" and 0 or 9
+end)
+timeDropdown:Add("Night")
+timeDropdown:Add("Day")
+
+
+-- ========================================================
+-- SISTEMA EGG GIFTER CON MOTOR INDEPENDIENTE (TAB5)
+-- ========================================================
+
+Tab5:AddLabel("--- Egg Gifter i don't know if it working ---")
+
+local selectedGifterPlayerName = nil
+local giftEggCount = 0
+
+-- 1. Creamos el Dropdown asignándolo a una variable única para esta pestaña
+local dropEggGifter = Tab5:AddDropdown("Select Player to Gift", function(text)
+    selectedGifterPlayerName = text
+end)
+
+-- 2. BUCLE CON TU ESTRUCTURA EXACTA (Se cambió dropPlayerTp por dropEggGifter)
+task.spawn(function()
+    while true do
+        pcall(function()
+            -- Limpia de forma segura el dropdown de los huevos antes de refrescar
+            if dropEggGifter.Clear or dropEggGifter.ClearOptions then
+                local clearFunc = dropEggGifter.Clear or dropEggGifter.ClearOptions
+                clearFunc(dropEggGifter)
+            end
+            
+            -- Obtiene la lista de jugadores utilizando las rutas nativas de tu inyector
+            local allPlayers = game:GetService("Players"):GetPlayers()
+            for _, p in ipairs(allPlayers) do
+                if p ~= game:GetService("Players").LocalPlayer then
+                    -- Añade los nombres directamente al Dropdown de los huevos
+                    dropEggGifter:Add(p.Name)
+                end
+            end
+        end)
+        task.wait(5) -- Sincronización idéntica de 5 segundos
+    end
+end)
+
+-- 3. Caja de texto para ingresar la cantidad de huevos
+Tab5:AddTextBox("Amount of Eggs:", function(text)
+    local amount = tonumber(text)
+    if amount then
+        giftEggCount = math.max(0, math.floor(amount))
+        print("[AFX] Cantidad de regalos guardada: " .. giftEggCount)
+    end
+end)
+
+-- 4. Botón ejecutor para enviar los regalos directo al servidor
+Tab5:AddButton("Start Gifting Eggs", function()
+    pcall(function()
+        if not selectedGifterPlayerName or giftEggCount <= 0 then 
+            print("[AFX] Elige un jugador del dropdown y una cantidad mayor a 0.")
+            return 
+        end
+        
+        local targetPlayer = game:GetService("Players"):FindFirstChild(selectedGifterPlayerName)
+        if not targetPlayer then return end
+        
+        task.spawn(function()
+            for i = 1, giftEggCount do
+                local char = game:GetService("Players").LocalPlayer.Character
+                local backpack = game:GetService("Players").LocalPlayer:FindFirstChild("Backpack")
+                
+                if not char or not backpack then break end
+                
+                -- Localiza el ítem de forma segura en las carpetas físicas del cliente
+                local egg = char:FindFirstChild("Protein Egg") or backpack:FindFirstChild("Protein Egg")
+                
+                if not egg then
+                    print("[AFX] No te quedan más huevos de proteína.")
+                    break
+                end
+                
+                -- 🔥 ACCIÓN CRUCIAL: Forzamos a equipar el huevo en la mano antes de enviar el regalo
+                if egg.Parent == backpack then
+                    egg.Parent = char
+                    task.wait(0.05) -- Breve pausa para que el servidor registre que lo sostienes
+                end
+                
+                -- 🔥 DISPARO CORREGIDO: Enviamos la petición pasando el argumento "proteinEgg" corregido y validado
+                pcall(function()
+                    Services.ReplicatedStorage.rEvents.giftRemote:InvokeServer("giftRequest", targetPlayer, "proteinEgg")
+                end)
+                
+                task.wait(0.15) -- Intervalo seguro de red para que cuente cada envío
+            end
+            print("[AFX] Envío masivo de huevos completado.")
+        end)
+    end)
 end)
 
 
