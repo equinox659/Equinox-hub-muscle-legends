@@ -114,10 +114,44 @@ window.ClipsDescendants = true
 window.Position = UDim2.new(0, 20, 0, 20)
 window.Selectable = true
 window.Size = UDim2.new(0, 200, 0, 200)
+
+-- 1. TU ID DE TEXTURA REAL DE 24 FOTOGRAMAS
 window.Image = "rbxassetid://136886502364972"
 window.ImageColor3 = Color3.new(1, 1, 1)
-window.ScaleType = Enum.ScaleType.Slice
-window.SliceCenter = Rect.new(12, 12, 12, 12)
+window.ImageTransparency = 0.35 -- Ajusta el brillo al gusto (0 es brillo máximo)
+
+-- 2. CAMBIO CRUCIAL: Eliminamos el Slice y forzamos Stretch para liberar la animación
+window.ScaleType = Enum.ScaleType.Stretch
+
+-- 3. EL BUCLE ANIMADOR NATIVO EN LA RAÍZ DEL MENÚ
+local columnas = 4     -- Los 4 logos horizontales de tu spritesheet.png
+local filas = 6        -- Los 6 logos verticales de tu spritesheet.png
+local totalFrames = 24  -- Total de fotogramas (4x6 = 24)
+
+task.spawn(function()
+    local index = 0
+    while task.wait(0.05) do -- Velocidad de reproducción fluida para tus 120 Hz en MiniOS 10
+        if window and window:IsA("ImageLabel") then
+            local sizeX = 1 / columnas
+            local sizeY = 1 / filas
+            
+            local col = index % columnas
+            local fila = math.floor(index / columnas)
+            
+            -- Recorta matemáticamente un cuadro a la vez en tiempo real
+            window.ImageRectSize = Vector2.new(window.AbsoluteSize.X * sizeX, window.AbsoluteSize.Y * sizeY)
+            window.ImageRectOffset = Vector2.new(col * (window.AbsoluteSize.X * sizeX), fila * (window.AbsoluteSize.Y * sizeY))
+            
+            index = index + 1
+            if index >= totalFrames then
+                index = 0
+            end
+        else
+            break
+        end
+    end
+end)
+
 
 resizer.Name = "Resizer"
 resizer.Parent = window
