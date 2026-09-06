@@ -115,22 +115,22 @@ window.Position = UDim2.new(0, 20, 0, 20)
 window.Selectable = true
 window.Size = UDim2.new(0, 200, 0, 200)
 
--- 1. TU ID DE TEXTURA REAL PARA EL BANNER DE AFX
+-- 1. TU ID DE IMAGEN REAL COMPATIBLE (4x6 = 24 LOGOS)
 window.Image = "rbxassetid://136886502364972"
 window.ImageColor3 = Color3.new(1, 1, 1)
-window.ImageTransparency = 0.35 -- Brillo ideal (0.35 evita que te tape las letras moradas)
+window.ImageTransparency = 0.35 -- Brillo ideal para que tus botones morados se lean bien
 
--- 🔥 2. EL CAMBIO GANADOR: Borramos el Slice para destrabar los 24 cuadros
+-- 🔥 EL CAMBIO GANADOR: Cambiamos a Stretch para liberar la animación de la cuadrícula
 window.ScaleType = Enum.ScaleType.Stretch
 
--- 🎞️ 3. EL BUCLE ANIMADOR NATIVO QUE CORRERÁ EN LA PC DE TODOS
-local columnas = 4     -- Los 4 logos horizontales de tu spritesheet.png
-local filas = 6        -- Los 6 logos verticales de tu spritesheet.png
-local totalFrames = 24  -- Total de fotogramas de la animación (4x6 = 24)
+-- 🎞️ EL BUCLE ANIMADOR NATIVO QUE CORRERÁ EN LA PC DE TODOS
+local columnas = 4     -- Los 4 logos horizontales de tu spritesheet
+local filas = 6        -- Los 6 logos verticales de tu spritesheet
+local totalFrames = 24  -- El total de fotogramas (4x6)
 
 task.spawn(function()
     local index = 0
-    while task.wait(0.05) do -- Frecuencia de frames fluida ideal para tus 120 Hz en MiniOS 10
+    while task.wait(0.05) do -- Velocidad fluida ideal para tus 120 Hz en MiniOS 10
         if window and window:IsA("ImageLabel") then
             local sizeX = 1 / columnas
             local sizeY = 1 / filas
@@ -147,7 +147,7 @@ task.spawn(function()
                 index = 0
             end
         else
-            break -- Detiene la animación si cierran el exploit para no generar lag en el farm
+            break -- Apaga el bucle si cierran el exploit para evitar lag
         end
     end
 end)
