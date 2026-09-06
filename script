@@ -115,22 +115,22 @@ window.Position = UDim2.new(0, 20, 0, 20)
 window.Selectable = true
 window.Size = UDim2.new(0, 200, 0, 200)
 
--- 1. TU ID DE TEXTURA REAL DE 24 FOTOGRAMAS
+-- 1. TU ID DE TEXTURA REAL PARA EL BANNER DE AFX
 window.Image = "rbxassetid://136886502364972"
 window.ImageColor3 = Color3.new(1, 1, 1)
-window.ImageTransparency = 0.35 -- Ajusta el brillo al gusto (0 es brillo máximo)
+window.ImageTransparency = 0.35 -- Brillo ideal (0.35 evita que te tape las letras moradas)
 
--- 2. CAMBIO CRUCIAL: Eliminamos el Slice y forzamos Stretch para liberar la animación
+-- 🔥 2. EL CAMBIO GANADOR: Borramos el Slice para destrabar los 24 cuadros
 window.ScaleType = Enum.ScaleType.Stretch
 
--- 3. EL BUCLE ANIMADOR NATIVO EN LA RAÍZ DEL MENÚ
+-- 🎞️ 3. EL BUCLE ANIMADOR NATIVO QUE CORRERÁ EN LA PC DE TODOS
 local columnas = 4     -- Los 4 logos horizontales de tu spritesheet.png
 local filas = 6        -- Los 6 logos verticales de tu spritesheet.png
-local totalFrames = 24  -- Total de fotogramas (4x6 = 24)
+local totalFrames = 24  -- Total de fotogramas de la animación (4x6 = 24)
 
 task.spawn(function()
     local index = 0
-    while task.wait(0.05) do -- Velocidad de reproducción fluida para tus 120 Hz en MiniOS 10
+    while task.wait(0.05) do -- Frecuencia de frames fluida ideal para tus 120 Hz en MiniOS 10
         if window and window:IsA("ImageLabel") then
             local sizeX = 1 / columnas
             local sizeY = 1 / filas
@@ -138,7 +138,7 @@ task.spawn(function()
             local col = index % columnas
             local fila = math.floor(index / columnas)
             
-            -- Recorta matemáticamente un cuadro a la vez en tiempo real
+            -- Recorta matemáticamente la cuadrícula transformando el mosaico en un solo logo animado gigante
             window.ImageRectSize = Vector2.new(window.AbsoluteSize.X * sizeX, window.AbsoluteSize.Y * sizeY)
             window.ImageRectOffset = Vector2.new(col * (window.AbsoluteSize.X * sizeX), fila * (window.AbsoluteSize.Y * sizeY))
             
@@ -147,7 +147,7 @@ task.spawn(function()
                 index = 0
             end
         else
-            break
+            break -- Detiene la animación si cierran el exploit para no generar lag en el farm
         end
     end
 end)
